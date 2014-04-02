@@ -23,60 +23,60 @@ public class ConnectionCalculatorConv implements ConnectionCalculator {
 
     @Override
     public void calculate(List<Connections> connections, ValuesProvider valuesProvider, Layer targetLayer) {
-	Conv2DConnection c = null;
-	Conv2DConnection bias = null;
+        Conv2DConnection c = null;
+        Conv2DConnection bias = null;
 
-	for (Connections con : connections) {
-	    if (con instanceof Conv2DConnection) {
-		if (Util.isBias(con.getInputLayer())) {
-		    bias = (Conv2DConnection) con;
-		} else {
-		    c = (Conv2DConnection) con;
-		}
-	    }
-	}
+        for (Connections con : connections) {
+            if (con instanceof Conv2DConnection) {
+                if (Util.isBias(con.getInputLayer())) {
+                    bias = (Conv2DConnection) con;
+                } else {
+                    c = (Conv2DConnection) con;
+                }
+            }
+        }
 
-	if (c != null) {
-	    // currently works only as a feedforward (including bp)
-	    if (inputFunction == null || miniBatchSize != valuesProvider.getColumns()) {
-		miniBatchSize = valuesProvider.getColumns();
-		inputFunction = createInputFunction(c, miniBatchSize);
-	    }
+        if (c != null) {
+            // currently works only as a feedforward (including bp)
+            if (inputFunction == null || miniBatchSize != valuesProvider.getColumns()) {
+                miniBatchSize = valuesProvider.getColumns();
+                inputFunction = createInputFunction(c, miniBatchSize);
+            }
 
-	    calculateBias(bias, valuesProvider);
+            calculateBias(bias, valuesProvider);
 
-	    if (targetLayer == c.getOutputLayer()) {
-		inputFunction.calculate(c, valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c), valuesProvider.getValues(targetLayer, c));
-	    } else {
-		inputFunction.calculate(c, valuesProvider.getValues(targetLayer, c), valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c));
-	    }
-	}
+            if (targetLayer == c.getOutputLayer()) {
+                inputFunction.calculate(c, valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c), valuesProvider.getValues(targetLayer, c));
+            } else {
+                inputFunction.calculate(c, valuesProvider.getValues(targetLayer, c), valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c));
+            }
+        }
     }
 
     protected AparapiConv2D createInputFunction(Conv2DConnection c, int miniBatchSize) {
-	return new AparapiConv2DFF(c, miniBatchSize);
+        return new AparapiConv2DFF(c, miniBatchSize);
     }
 
     protected void calculateBias(Conv2DConnection bias, ValuesProvider vp) {
-	if (bias != null) {
-	    float[] biasValue = vp.getValues(bias.getInputLayer(), bias).getElements();
-	    if (biasValue[0] == 0) {
-		Util.fillArray(biasValue, 1);
-	    }
+        if (bias != null) {
+            float[] biasValue = vp.getValues(bias.getInputLayer(), bias).getElements();
+            if (biasValue[0] == 0) {
+                Util.fillArray(biasValue, 1);
+            }
 
-	    float[] a = vp.getValues(bias.getOutputLayer(), bias).getElements();
-	    int fm = a.length / bias.getWeights().length;
-	    for (int i = 0; i < a.length; i++) {
-		a[i] += bias.getWeights()[i / fm];
-	    }
-	}
+            float[] a = vp.getValues(bias.getOutputLayer(), bias).getElements();
+            int fm = a.length / bias.getWeights().length;
+            for (int i = 0; i < a.length; i++) {
+                a[i] += bias.getWeights()[i / fm];
+            }
+        }
     }
 
     public AparapiConv2D getInputFunction() {
-	return inputFunction;
+        return inputFunction;
     }
 
     public void setInputFunction(AparapiConv2D inputFunction) {
-	this.inputFunction = inputFunction;
+        this.inputFunction = inputFunction;
     }
 }

@@ -17,32 +17,39 @@ public class DBNTrainer extends DNNLayerTrainer implements TrainingEventListener
     private static final long serialVersionUID = 1L;
 
     public DBNTrainer(Properties properties) {
-	super(properties);
+        super(properties);
     }
 
     @Override
     public void handleEvent(TrainingEvent event) {
-	// transfer of learned weights from lower to the higher RBM
-	if (event instanceof LayerTrainingFinished) {
-	    LayerTrainingFinished e = (LayerTrainingFinished) event;
-	    CDTrainerBase t = (CDTrainerBase) e.currentTrainer;
-	    RBM current = t.getNeuralNetwork();
-	    List<? extends NeuralNetwork> list = getNeuralNetwork().getNeuralNetworks();
+        // transfer of learned weights from lower to the higher RBM
+        if (event instanceof LayerTrainingFinished) {
+            LayerTrainingFinished e = (LayerTrainingFinished) event;
+            CDTrainerBase t = (CDTrainerBase) e.currentTrainer;
+            RBM current = t.getNeuralNetwork();
+            List<? extends NeuralNetwork> list = getNeuralNetwork().getNeuralNetworks();
 
-	    if (list.indexOf(current) < list.size() - 1) {
-		RBM next = (RBM) list.get(list.indexOf(current) + 1);
-		if (current.getMainConnections().getConnectionGraph().getElements().length == next.getMainConnections().getConnectionGraph().getElements().length) {
-		    System.arraycopy(current.getMainConnections().getConnectionGraph().getElements(), 0, next.getMainConnections().getConnectionGraph().getElements(), 0, next.getMainConnections().getConnectionGraph().getElements().length);
-		}
+            if (list.indexOf(current) < list.size() - 1) {
+                RBM next = (RBM) list.get(list.indexOf(current) + 1);
+                if (current.getMainConnections().getConnectionGraph().getElements().length == next.getMainConnections().getConnectionGraph().getElements().length) {
+                    System.arraycopy(current.getMainConnections().getConnectionGraph().getElements(), 0, next.getMainConnections().getConnectionGraph().getElements(), 0, next
+                            .getMainConnections().getConnectionGraph().getElements().length);
+                }
 
-		if (current.getVisibleBiasConnections() != null && next.getVisibleBiasConnections() != null && current.getVisibleBiasConnections().getConnectionGraph().getElements().length == next.getVisibleBiasConnections().getConnectionGraph().getElements().length) {
-		    System.arraycopy(current.getVisibleBiasConnections().getConnectionGraph().getElements(), 0, next.getVisibleBiasConnections().getConnectionGraph().getElements(), 0, next.getVisibleBiasConnections().getConnectionGraph().getElements().length);
-		}
-		
-		if (current.getHiddenBiasConnections() != null && next.getHiddenBiasConnections() != null && current.getHiddenBiasConnections().getConnectionGraph().getElements().length == next.getHiddenBiasConnections().getConnectionGraph().getElements().length) {
-		    System.arraycopy(current.getHiddenBiasConnections().getConnectionGraph().getElements(), 0, next.getHiddenBiasConnections().getConnectionGraph().getElements(), 0, next.getHiddenBiasConnections().getConnectionGraph().getElements().length);
-		}
-	    }
-	}
+                if (current.getVisibleBiasConnections() != null
+                        && next.getVisibleBiasConnections() != null
+                        && current.getVisibleBiasConnections().getConnectionGraph().getElements().length == next.getVisibleBiasConnections().getConnectionGraph().getElements().length) {
+                    System.arraycopy(current.getVisibleBiasConnections().getConnectionGraph().getElements(), 0,
+                            next.getVisibleBiasConnections().getConnectionGraph().getElements(), 0, next.getVisibleBiasConnections().getConnectionGraph().getElements().length);
+                }
+
+                if (current.getHiddenBiasConnections() != null
+                        && next.getHiddenBiasConnections() != null
+                        && current.getHiddenBiasConnections().getConnectionGraph().getElements().length == next.getHiddenBiasConnections().getConnectionGraph().getElements().length) {
+                    System.arraycopy(current.getHiddenBiasConnections().getConnectionGraph().getElements(), 0, next.getHiddenBiasConnections().getConnectionGraph().getElements(),
+                            0, next.getHiddenBiasConnections().getConnectionGraph().getElements().length);
+                }
+            }
+        }
     }
 }

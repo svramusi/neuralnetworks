@@ -18,32 +18,32 @@ public class BernoulliDistribution implements MatrixFunction {
 
     @Override
     public void value(Matrix inputOutput) {
-	BernoulliKernel kernel = kernels.get(inputOutput.getElements().length);
-	if (kernel == null) {
-	    kernels.put(inputOutput.getElements().length, kernel = new BernoulliKernel(inputOutput.getElements().length));
-	}
+        BernoulliKernel kernel = kernels.get(inputOutput.getElements().length);
+        if (kernel == null) {
+            kernels.put(inputOutput.getElements().length, kernel = new BernoulliKernel(inputOutput.getElements().length));
+        }
 
-	kernel.values = inputOutput.getElements();
+        kernel.values = inputOutput.getElements();
 
-	Environment.getInstance().getExecutionStrategy().execute(kernel, inputOutput.getElements().length);
+        Environment.getInstance().getExecutionStrategy().execute(kernel, inputOutput.getElements().length);
     }
 
     private static class BernoulliKernel extends XORShiftKernel {
 
-	private float[] values;
+        private float[] values;
 
-	public BernoulliKernel(int maximumRange) {
-	    super(maximumRange);
-	}
+        public BernoulliKernel(int maximumRange) {
+            super(maximumRange);
+        }
 
-	@Override
-	public void run() {
-	    int id = getGlobalId();
-	    if (values[id] > random01()) {
-		values[id] = 1;
-	    } else {
-		values[id] = 0;
-	    }
-	}
+        @Override
+        public void run() {
+            int id = getGlobalId();
+            if (values[id] > random01()) {
+                values[id] = 1;
+            } else {
+                values[id] = 0;
+            }
+        }
     }
 }

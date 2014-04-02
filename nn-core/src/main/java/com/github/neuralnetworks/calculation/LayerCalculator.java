@@ -13,7 +13,8 @@ import com.github.neuralnetworks.architecture.NeuralNetwork;
 public interface LayerCalculator extends Serializable {
 
     /**
-     * This method receives a target layer to calculate, a list of calculated layer results and a list of layers that have already been calculated.
+     * This method receives a target layer to calculate, a list of calculated
+     * layer results and a list of layers that have already been calculated.
      * This information is enough for the target layer can be calculated
      * 
      * @param calculatedLayers

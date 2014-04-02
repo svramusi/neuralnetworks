@@ -13,24 +13,25 @@ public class FullyConnected extends ConnectionsImpl implements GraphConnections 
     private final Matrix connectionGraph;
 
     public FullyConnected(Layer inputLayer, Layer outputLayer, int inputUnitCount, int outputUnitCount) {
-	super(inputLayer, outputLayer);
+        super(inputLayer, outputLayer);
 
-	// connection graph is initialized depending on the size of the input/output layers
-	connectionGraph = new Matrix(new float[inputUnitCount * outputUnitCount], inputUnitCount);
+        // connection graph is initialized depending on the size of the
+        // input/output layers
+        connectionGraph = new Matrix(new float[inputUnitCount * outputUnitCount], inputUnitCount);
     }
 
     @Override
     public Matrix getConnectionGraph() {
-	return connectionGraph;
+        return connectionGraph;
     }
 
     @Override
     public int getInputUnitCount() {
-	return connectionGraph.getColumns();
+        return connectionGraph.getColumns();
     }
 
     @Override
     public int getOutputUnitCount() {
-	return connectionGraph.getRows();
+        return connectionGraph.getRows();
     }
 }

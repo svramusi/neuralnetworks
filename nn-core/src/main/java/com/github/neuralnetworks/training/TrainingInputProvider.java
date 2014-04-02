@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public interface TrainingInputProvider extends Serializable {
     public TrainingInputData getNextInput();
+
     public int getInputSize();
+
     public void reset();
 }

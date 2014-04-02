@@ -16,25 +16,25 @@ public class AparapiReLU extends ConnectionCalculatorFullyConnected {
 
     @Override
     protected ConnectionCalculator createInputFunction(SortedMap<GraphConnections, Integer> inputConnections, ValuesProvider valuesProvider, Layer targetLayer) {
-	return new AparapiReLUFunction(inputConnections, valuesProvider.getColumns(), targetLayer);
+        return new AparapiReLUFunction(inputConnections, valuesProvider.getColumns(), targetLayer);
     }
 
     public static class AparapiReLUFunction extends AparapiWeightedSum {
 
-	public AparapiReLUFunction(SortedMap<GraphConnections, Integer> inputConnections, int miniBatchSize, Layer targetLayer) {
-	    super(inputConnections, miniBatchSize, targetLayer);
-	}
+        public AparapiReLUFunction(SortedMap<GraphConnections, Integer> inputConnections, int miniBatchSize, Layer targetLayer) {
+            super(inputConnections, miniBatchSize, targetLayer);
+        }
 
-	private static final long serialVersionUID = 2572354641295173835L;
+        private static final long serialVersionUID = 2572354641295173835L;
 
-	@Override
-	protected void after() {
-	    int mb = miniBatchSize;
-	    int outputId = getGlobalId() * mb;
-	    
-	    for (int i = 0; i < mb; i++) {
-		output[outputId + i] = max(0, output[outputId + i]);
-	    }
-	}
+        @Override
+        protected void after() {
+            int mb = miniBatchSize;
+            int outputId = getGlobalId() * mb;
+
+            for (int i = 0; i < mb; i++) {
+                output[outputId + i] = max(0, output[outputId + i]);
+            }
+        }
     }
 }

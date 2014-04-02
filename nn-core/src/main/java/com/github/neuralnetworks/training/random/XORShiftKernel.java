@@ -36,21 +36,22 @@ public abstract class XORShiftKernel extends PRNGKernel {
      *            set seeds explicitly
      */
     public XORShiftKernel(Range maximumRange, int[] seeds) {
-	if (maximumRange.getDims() != 1)
-	    throw new IllegalArgumentException("Only 1-dimensional ranges supported!");
+        if (maximumRange.getDims() != 1)
+            throw new IllegalArgumentException("Only 1-dimensional ranges supported!");
 
-	int maxThreads = maximumRange.getGlobalSize(0);
+        int maxThreads = maximumRange.getGlobalSize(0);
 
-	states = new int[SEED_SIZE * maxThreads];
+        states = new int[SEED_SIZE * maxThreads];
 
-	if (seeds == null)
-	    seeds = BinaryUtils.convertBytesToInts(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE * maxThreads * INTEGER_SIZE));
+        if (seeds == null)
+            seeds = BinaryUtils.convertBytesToInts(DefaultSeedGenerator.getInstance().generateSeed(SEED_SIZE * maxThreads * INTEGER_SIZE));
 
-	if (SEED_SIZE * maxThreads != seeds.length)
-	    throw new IllegalArgumentException(String.format("Wrong size of seeds for threads! Expected %d, got %d, for %d threads.", SEED_SIZE * maxThreads, seeds.length, maxThreads));
+        if (SEED_SIZE * maxThreads != seeds.length)
+            throw new IllegalArgumentException(String.format("Wrong size of seeds for threads! Expected %d, got %d, for %d threads.", SEED_SIZE * maxThreads, seeds.length,
+                    maxThreads));
 
-	for (int n = 0; n < states.length; n++)
-	    states[n] = seeds[n];
+        for (int n = 0; n < states.length; n++)
+            states[n] = seeds[n];
     }
 
     /**
@@ -60,22 +61,22 @@ public abstract class XORShiftKernel extends PRNGKernel {
      *            maximum range size
      */
     public XORShiftKernel(int maximumRange) {
-	this(Range.create(maximumRange), null);
+        this(Range.create(maximumRange), null);
     }
 
     /** Implements PRNGKernel method */
     @Override
     public int random() {
-	int offset = SEED_SIZE * getGlobalId();
+        int offset = SEED_SIZE * getGlobalId();
 
-	int t = (states[offset + 0] ^ (states[offset + 0] >> 7));
+        int t = (states[offset + 0] ^ (states[offset + 0] >> 7));
 
-	states[offset + 0] = states[offset + 1];
-	states[offset + 1] = states[offset + 2];
-	states[offset + 2] = states[offset + 3];
-	states[offset + 3] = states[offset + 4];
-	states[offset + 4] = (states[offset + 4] ^ (states[offset + 4] << 6)) ^ (t ^ (t << 13));
+        states[offset + 0] = states[offset + 1];
+        states[offset + 1] = states[offset + 2];
+        states[offset + 2] = states[offset + 3];
+        states[offset + 3] = states[offset + 4];
+        states[offset + 4] = (states[offset + 4] ^ (states[offset + 4] << 6)) ^ (t ^ (t << 13));
 
-	return (states[offset + 1] + states[offset + 1] + 1) * states[offset + 4];
+        return (states[offset + 1] + states[offset + 1] + 1) * states[offset + 4];
     }
 }

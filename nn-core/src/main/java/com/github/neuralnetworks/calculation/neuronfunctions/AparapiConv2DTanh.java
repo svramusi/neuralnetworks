@@ -11,20 +11,20 @@ public class AparapiConv2DTanh extends ConnectionCalculatorConv {
 
     @Override
     protected AparapiConv2D createInputFunction(Conv2DConnection c, int miniBatchSize) {
-	return new AparapiConv2DTanhFunction(c, miniBatchSize);
+        return new AparapiConv2DTanhFunction(c, miniBatchSize);
     }
 
     public static class AparapiConv2DTanhFunction extends AparapiConv2DFF {
 
-	private static final long serialVersionUID = -7985734201416578973L;
+        private static final long serialVersionUID = -7985734201416578973L;
 
-	public AparapiConv2DTanhFunction(Conv2DConnection c, int miniBatchSize) {
-	    super(c, miniBatchSize);
-	}
+        public AparapiConv2DTanhFunction(Conv2DConnection c, int miniBatchSize) {
+            super(c, miniBatchSize);
+        }
 
-	@Override
-	protected float activationFunction(float value) {
-	    return tan(value);
-	}
+        @Override
+        protected float activationFunction(float value) {
+            return tan(value);
+        }
     }
 }

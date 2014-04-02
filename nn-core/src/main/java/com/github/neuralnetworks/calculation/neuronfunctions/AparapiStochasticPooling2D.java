@@ -19,47 +19,47 @@ public class AparapiStochasticPooling2D implements ConnectionCalculator {
 
     @Override
     public void calculate(List<Connections> connections, ValuesProvider valuesProvider, Layer targetLayer) {
-	if (cc == null || cc.getMiniBatchSize() != valuesProvider.getColumns()) {
-	    cc = new AparapiStochasticPooling2DCC((Subsampling2DConnection) connections.get(0), valuesProvider.getColumns());
-	}
+        if (cc == null || cc.getMiniBatchSize() != valuesProvider.getColumns()) {
+            cc = new AparapiStochasticPooling2DCC((Subsampling2DConnection) connections.get(0), valuesProvider.getColumns());
+        }
 
-	cc.calculate(connections, valuesProvider, targetLayer);
+        cc.calculate(connections, valuesProvider, targetLayer);
     }
 
     public static class AparapiStochasticPooling2DCC extends AparapiSubsampling2D {
 
-	private static final long serialVersionUID = -2393526660090301257L;
+        private static final long serialVersionUID = -2393526660090301257L;
 
-	public AparapiStochasticPooling2DCC(Subsampling2DConnection c, int miniBatchSize) {
-	    super(c, miniBatchSize);
-	}
+        public AparapiStochasticPooling2DCC(Subsampling2DConnection c, int miniBatchSize) {
+            super(c, miniBatchSize);
+        }
 
-	@Override
-	protected void pool(int inputStartIndex) {
-	    int miniBatch = miniBatchSize;
-	    int rl = regionLength;
-	    float sum = 0;
-	    float result = 0;
-	    float a = 0;
+        @Override
+        protected void pool(int inputStartIndex) {
+            int miniBatch = miniBatchSize;
+            int rl = regionLength;
+            float sum = 0;
+            float result = 0;
+            float a = 0;
 
-	    for (int i = 0; i < miniBatch; i++) {
-		sum = 0;
-		result = 0;
+            for (int i = 0; i < miniBatch; i++) {
+                sum = 0;
+                result = 0;
 
-		for (int j = 0; j < rl; j++) {
-		    sum += input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i];
-		}
+                for (int j = 0; j < rl; j++) {
+                    sum += input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i];
+                }
 
-		if (sum > 0) {
-		    a = 0;
-		    for (int j = 0; j < rl; j++) {
-			a = input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i];
-			result += a * (a / sum);
-		    }
-		}
+                if (sum > 0) {
+                    a = 0;
+                    for (int j = 0; j < rl; j++) {
+                        a = input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i];
+                        result += a * (a / sum);
+                    }
+                }
 
-		output[getGlobalId() * miniBatch + i] = result;
-	    }
-	}
+                output[getGlobalId() * miniBatch + i] = result;
+            }
+        }
     }
 }

@@ -29,53 +29,52 @@ public class RBM extends NeuralNetworkImpl {
      */
     private FullyConnected hiddenBiasConnections;
 
-
     public RBM(int visibleUnitCount, int hiddenUnitCount, boolean addVisibleBias, boolean addHiddenBias) {
-	super();
-	init(new Layer(), new Layer(), visibleUnitCount, hiddenUnitCount, addVisibleBias, addHiddenBias);
+        super();
+        init(new Layer(), new Layer(), visibleUnitCount, hiddenUnitCount, addVisibleBias, addHiddenBias);
     }
 
     public RBM(Layer visibleLayer, Layer hiddenLayer, int visibleUnitCount, int hiddenUnitCount, boolean addVisibleBias, boolean addHiddenBias) {
-	super();
-	init(visibleLayer, hiddenLayer, visibleUnitCount, hiddenUnitCount, addVisibleBias, addHiddenBias);
+        super();
+        init(visibleLayer, hiddenLayer, visibleUnitCount, hiddenUnitCount, addVisibleBias, addHiddenBias);
     }
 
     protected void init(Layer visibleLayer, Layer hiddenLayer, int visibleUnitCount, int hiddenUnitCount, boolean addVisibleBias, boolean addHiddenBias) {
-	addLayer(visibleLayer);
-	addLayer(hiddenLayer);
+        addLayer(visibleLayer);
+        addLayer(hiddenLayer);
 
-	mainConnections = new FullyConnected(visibleLayer, hiddenLayer, visibleUnitCount, hiddenUnitCount);
+        mainConnections = new FullyConnected(visibleLayer, hiddenLayer, visibleUnitCount, hiddenUnitCount);
 
-	if (addVisibleBias) {
-	    Layer visibleBiasLayer = new Layer();
-	    addLayer(visibleBiasLayer);
-	    visibleBiasConnections = new FullyConnected(visibleBiasLayer, visibleLayer, 1, visibleUnitCount);
-	}
+        if (addVisibleBias) {
+            Layer visibleBiasLayer = new Layer();
+            addLayer(visibleBiasLayer);
+            visibleBiasConnections = new FullyConnected(visibleBiasLayer, visibleLayer, 1, visibleUnitCount);
+        }
 
-	if (addHiddenBias) {
-	    Layer hiddenBiasLayer = new Layer();
-	    addLayer(hiddenBiasLayer);
-	    hiddenBiasConnections = new FullyConnected(hiddenBiasLayer, hiddenLayer, 1, hiddenUnitCount);
-	}
+        if (addHiddenBias) {
+            Layer hiddenBiasLayer = new Layer();
+            addLayer(hiddenBiasLayer);
+            hiddenBiasConnections = new FullyConnected(hiddenBiasLayer, hiddenLayer, 1, hiddenUnitCount);
+        }
     }
 
     public GraphConnections getMainConnections() {
-	return mainConnections;
+        return mainConnections;
     }
 
     public GraphConnections getVisibleBiasConnections() {
-	return visibleBiasConnections;
+        return visibleBiasConnections;
     }
 
     public GraphConnections getHiddenBiasConnections() {
-	return hiddenBiasConnections;
+        return hiddenBiasConnections;
     }
 
     public Layer getVisibleLayer() {
-	return mainConnections.getInputLayer();
+        return mainConnections.getInputLayer();
     }
 
     public Layer getHiddenLayer() {
-	return mainConnections.getOutputLayer();
+        return mainConnections.getOutputLayer();
     }
 }

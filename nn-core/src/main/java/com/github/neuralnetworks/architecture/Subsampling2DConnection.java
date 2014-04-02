@@ -14,39 +14,40 @@ public class Subsampling2DConnection extends ConnectionsImpl {
     protected int outputFeatureMapRows;
     protected int filters;
 
-    public Subsampling2DConnection(Layer inputLayer, Layer outputLayer, int inputFeatureMapColumns, int inputFeatureMapRows, int subsamplingRegionRows, int subsamplingRegionCols, int filters) {
-	super(inputLayer, outputLayer);
-	this.inputFeatureMapColumns = inputFeatureMapColumns;
-	this.inputFeatureMapRows = inputFeatureMapRows;
-	this.filters = filters;
-	setDimensions(subsamplingRegionRows, subsamplingRegionCols);
+    public Subsampling2DConnection(Layer inputLayer, Layer outputLayer, int inputFeatureMapColumns, int inputFeatureMapRows, int subsamplingRegionRows, int subsamplingRegionCols,
+            int filters) {
+        super(inputLayer, outputLayer);
+        this.inputFeatureMapColumns = inputFeatureMapColumns;
+        this.inputFeatureMapRows = inputFeatureMapRows;
+        this.filters = filters;
+        setDimensions(subsamplingRegionRows, subsamplingRegionCols);
     }
 
     public void setDimensions(int subsamplingRegionRows, int subsamplingRegionCols) {
-	setOutputFeatureMapRows(inputFeatureMapRows / subsamplingRegionRows);
-	setOutputFeatureMapColumns(inputFeatureMapColumns / subsamplingRegionCols);
+        setOutputFeatureMapRows(inputFeatureMapRows / subsamplingRegionRows);
+        setOutputFeatureMapColumns(inputFeatureMapColumns / subsamplingRegionCols);
     }
 
     public int getSubsamplingRegionRows() {
-	return inputFeatureMapRows / outputFeatureMapRows;
+        return inputFeatureMapRows / outputFeatureMapRows;
     }
 
     public int getSubsamplingRegionCols() {
-	return inputFeatureMapColumns / outputFeatureMapColumns;
+        return inputFeatureMapColumns / outputFeatureMapColumns;
     }
 
     public int getSubsamplingRegionLength() {
-	return getSubsamplingRegionRows() * getSubsamplingRegionCols();
+        return getSubsamplingRegionRows() * getSubsamplingRegionCols();
     }
 
     @Override
     public int getInputUnitCount() {
-	return inputFeatureMapRows * inputFeatureMapColumns * filters;
+        return inputFeatureMapRows * inputFeatureMapColumns * filters;
     }
 
     @Override
     public int getOutputUnitCount() {
-	return outputFeatureMapRows * outputFeatureMapColumns * filters;
+        return outputFeatureMapRows * outputFeatureMapColumns * filters;
     }
 
     public int getInputFeatureMapColumns() {
@@ -90,10 +91,10 @@ public class Subsampling2DConnection extends ConnectionsImpl {
     }
 
     public int getInputFeatureMapLength() {
-	return inputFeatureMapRows * inputFeatureMapColumns;
+        return inputFeatureMapRows * inputFeatureMapColumns;
     }
-    
+
     public int getOutputFeatureMapLength() {
-	return outputFeatureMapRows * outputFeatureMapColumns;
+        return outputFeatureMapRows * outputFeatureMapColumns;
     }
 }

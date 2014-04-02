@@ -13,22 +13,22 @@ public class TrainingInputDataImpl implements TrainingInputData {
     private Matrix target;
 
     public TrainingInputDataImpl() {
-	super();
+        super();
     }
 
     public TrainingInputDataImpl(Matrix input) {
-	super();
-	this.input = input;
+        super();
+        this.input = input;
     }
 
     public TrainingInputDataImpl(Matrix input, Matrix target) {
-	this.input = input;
-	this.target = target;
+        this.input = input;
+        this.target = target;
     }
 
     @Override
     public Matrix getInput() {
-	return input;
+        return input;
     }
 
     public void setInput(Matrix input) {
@@ -37,7 +37,7 @@ public class TrainingInputDataImpl implements TrainingInputData {
 
     @Override
     public Matrix getTarget() {
-	return target;
+        return target;
     }
 
     public void setTarget(Matrix target) {

@@ -7,9 +7,11 @@ import com.github.neuralnetworks.util.UniqueList;
 import com.github.neuralnetworks.util.Util;
 
 /**
- * A layer of neurons. Each layer contains a set of connections that link it to other layers.
- * In that sense every neural network is a graph. This is done for maximum versatility.
- * It makes possible the representation of various architectures - committee of machines or parallel networks to be calculated on different GPU devices.
+ * A layer of neurons. Each layer contains a set of connections that link it to
+ * other layers. In that sense every neural network is a graph. This is done for
+ * maximum versatility. It makes possible the representation of various
+ * architectures - committee of machines or parallel networks to be calculated
+ * on different GPU devices.
  */
 public class Layer implements Serializable {
 
@@ -19,10 +21,10 @@ public class Layer implements Serializable {
      * Set of links to other layers
      */
     private List<Connections> connections;
-    
+
     public Layer() {
-	super();
-	this.connections = new UniqueList<>();
+        super();
+        this.connections = new UniqueList<>();
     }
 
     /**
@@ -30,29 +32,29 @@ public class Layer implements Serializable {
      * @return list of connections within the specific neural network
      */
     public List<Connections> getConnections(NeuralNetwork network) {
-	List<Connections> result = new UniqueList<Connections>();
-	for (Connections c : connections) {
-	    if (network.getLayers().contains(Util.getOppositeLayer(c, this))) {
-		result.add(c);
-	    }
-	}
+        List<Connections> result = new UniqueList<Connections>();
+        for (Connections c : connections) {
+            if (network.getLayers().contains(Util.getOppositeLayer(c, this))) {
+                result.add(c);
+            }
+        }
 
-	return result;
+        return result;
     }
 
     public List<Connections> getConnections() {
-	return connections;
+        return connections;
     }
 
     public void setConnections(List<Connections> connections) {
-	this.connections = connections;
+        this.connections = connections;
     }
 
     public void addConnection(Connections connection) {
-	if (connections == null) {
-	    connections = new UniqueList<>();
-	}
+        if (connections == null) {
+            connections = new UniqueList<>();
+        }
 
-	connections.add(connection);
+        connections.add(connection);
     }
 }

@@ -19,20 +19,23 @@ public class BackPropagationFullyConnected extends BackPropagationConnectionCalc
     private static final long serialVersionUID = 1178188233641224762L;
 
     public BackPropagationFullyConnected(Properties properties) {
-	super(properties);
+        super(properties);
     }
 
     @Override
-    protected void addBackpropFunction(SortedMap<Connections, Integer> inputConnections, Map<Connections, BackPropagationConnectionCalculator> connectionCalculators, Layer targetLayer) {
-	for (Entry<Connections, Integer> e : inputConnections.entrySet()) {
-	    SortedMap<GraphConnections, Integer> m = new TreeMap<>();
-	    if (Util.isBias(e.getKey().getInputLayer()) && targetLayer != e.getKey().getInputLayer()) {
-		m.put((GraphConnections) e.getKey(), miniBatchSize);
-		connectionCalculators.put(e.getKey(), new AparapiBackpropagationFullyConnected(m, miniBatchSize, getLearningRate(), getMomentum(), getL1weightDecay(), getL2weightDecay(), e.getKey().getInputLayer()));
-	    } else {
-		m.put((GraphConnections) e.getKey(), e.getValue());
-		connectionCalculators.put(e.getKey(), new AparapiBackpropagationFullyConnected(m, miniBatchSize, getLearningRate(), getMomentum(), getL1weightDecay(), getL2weightDecay(), targetLayer));
-	    }
-	}
+    protected void addBackpropFunction(SortedMap<Connections, Integer> inputConnections, Map<Connections, BackPropagationConnectionCalculator> connectionCalculators,
+            Layer targetLayer) {
+        for (Entry<Connections, Integer> e : inputConnections.entrySet()) {
+            SortedMap<GraphConnections, Integer> m = new TreeMap<>();
+            if (Util.isBias(e.getKey().getInputLayer()) && targetLayer != e.getKey().getInputLayer()) {
+                m.put((GraphConnections) e.getKey(), miniBatchSize);
+                connectionCalculators.put(e.getKey(), new AparapiBackpropagationFullyConnected(m, miniBatchSize, getLearningRate(), getMomentum(), getL1weightDecay(),
+                        getL2weightDecay(), e.getKey().getInputLayer()));
+            } else {
+                m.put((GraphConnections) e.getKey(), e.getValue());
+                connectionCalculators.put(e.getKey(), new AparapiBackpropagationFullyConnected(m, miniBatchSize, getLearningRate(), getMomentum(), getL1weightDecay(),
+                        getL2weightDecay(), targetLayer));
+            }
+        }
     }
 }

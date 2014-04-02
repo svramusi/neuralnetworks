@@ -28,14 +28,14 @@ public abstract class PRNGKernel extends Kernel {
      * @return pseudo random float from range: &lt;0.0; 1.0>
      */
     public float random01() {
-	float value = random();
+        float value = random();
 
-	if (value < 0)
-	    return value / Integer.MIN_VALUE;
-	else if (value > 0)
-	    return value / Integer.MAX_VALUE;
-	else
-	    return value;
+        if (value < 0)
+            return value / Integer.MIN_VALUE;
+        else if (value > 0)
+            return value / Integer.MAX_VALUE;
+        else
+            return value;
     }
 
     /**
@@ -44,14 +44,14 @@ public abstract class PRNGKernel extends Kernel {
      * @return pseudo random float from range: &lt;-1.0; 1.0>
      */
     public float randomn11() {
-	float value = random();
+        float value = random();
 
-	if (value < 0)
-	    return -value / Integer.MIN_VALUE;
-	else if (value > 0)
-	    return value / Integer.MAX_VALUE;
-	else
-	    return value;
+        if (value < 0)
+            return -value / Integer.MIN_VALUE;
+        else if (value > 0)
+            return value / Integer.MAX_VALUE;
+        else
+            return value;
     }
 
     /**
@@ -69,17 +69,17 @@ public abstract class PRNGKernel extends Kernel {
      *         number generator's sequence.
      */
     public float randomGaussian() {
-	float v1 = 1, v2, s = 1;
-	boolean found = false;
+        float v1 = 1, v2, s = 1;
+        boolean found = false;
 
-	while (!found) {
-	    v1 = randomn11();
-	    v2 = randomn11();
-	    s = v1 * v1 + v2 * v2;
+        while (!found) {
+            v1 = randomn11();
+            v2 = randomn11();
+            s = v1 * v1 + v2 * v2;
 
-	    found = s < 1 && s > 0;
-	}
+            found = s < 1 && s > 0;
+        }
 
-	return v1 * sqrt(-2 * log(s) / s);
+        return v1 * sqrt(-2 * log(s) / s);
     }
 }

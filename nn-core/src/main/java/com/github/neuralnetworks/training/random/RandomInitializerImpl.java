@@ -14,54 +14,54 @@ public class RandomInitializerImpl implements RandomInitializer {
     protected float end;
 
     public RandomInitializerImpl() {
-	super();
-	this.random = new Random();
-	this.start = 0;
-	this.end = 1;
+        super();
+        this.random = new Random();
+        this.start = 0;
+        this.end = 1;
     }
 
     public RandomInitializerImpl(Random random) {
-	super();
-	this.random = random;
-	this.start = 0;
-	this.end = 1;
+        super();
+        this.random = random;
+        this.start = 0;
+        this.end = 1;
     }
 
     public RandomInitializerImpl(Random random, float start, float end) {
-	super();
-	this.random = random;
-	this.start = start;
-	this.end = end;
+        super();
+        this.random = random;
+        this.start = start;
+        this.end = end;
     }
 
     @Override
     public void initialize(float[] array) {
-	for (int i = 0; i < array.length; i++) {
-	    array[i] = start + random.nextFloat() * (end - start);
-	}
+        for (int i = 0; i < array.length; i++) {
+            array[i] = start + random.nextFloat() * (end - start);
+        }
     }
- 
+
     public Random getRandom() {
-	return random;
+        return random;
     }
 
     public void setRandom(Random random) {
-	this.random = random;
+        this.random = random;
     }
 
     public float getStart() {
-	return start;
+        return start;
     }
 
     public void setStart(float start) {
-	this.start = start;
+        this.start = start;
     }
 
     public float getEnd() {
-	return end;
+        return end;
     }
 
     public void setEnd(float end) {
-	this.end = end;
+        this.end = end;
     }
 }

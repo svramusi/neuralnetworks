@@ -13,7 +13,7 @@ public class AparapiBackpropagationSubsampling2D extends AparapiSubsampling2D im
     private static final long serialVersionUID = -345286029645674230L;
 
     public AparapiBackpropagationSubsampling2D(Subsampling2DConnection c, int miniBatchSize) {
-	super(c, miniBatchSize);
+        super(c, miniBatchSize);
     }
 
     /**
@@ -28,9 +28,9 @@ public class AparapiBackpropagationSubsampling2D extends AparapiSubsampling2D im
 
     @Override
     protected void init(Subsampling2DConnection c, Matrix input, Matrix output) {
-	super.init(c, input, output);
+        super.init(c, input, output);
 
-	ffActivation = activations.getValues(c.getInputLayer(), c).getElements();
+        ffActivation = activations.getValues(c.getInputLayer(), c).getElements();
     }
 
     @Override
@@ -45,45 +45,45 @@ public class AparapiBackpropagationSubsampling2D extends AparapiSubsampling2D im
 
     @Override
     public float getLearningRate() {
-	// UNUSED
-	return 0;
+        // UNUSED
+        return 0;
     }
 
     @Override
     public void setLearningRate(float learningRate) {
-	// UNUSED
+        // UNUSED
     }
 
     @Override
     public float getMomentum() {
-	// UNUSED
-	return 0;
+        // UNUSED
+        return 0;
     }
 
     @Override
     public void setMomentum(float momentum) {
-	// UNUSED
+        // UNUSED
     }
 
     @Override
     public float getL1weightDecay() {
-	// UNUSED
-	return 0;
+        // UNUSED
+        return 0;
     }
 
     @Override
     public void setL1weightDecay(float weightDecay) {
-	// UNUSED
+        // UNUSED
     }
 
     @Override
     public float getL2weightDecay() {
-	// UNUSED
-	return 0;
+        // UNUSED
+        return 0;
     }
 
     @Override
     public void setL2weightDecay(float l2weightDecay) {
-	// UNUSED
+        // UNUSED
     }
 }

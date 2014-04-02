@@ -19,35 +19,35 @@ public class AparapiMaxPooling2D implements ConnectionCalculator {
 
     @Override
     public void calculate(List<Connections> connections, ValuesProvider valuesProvider, Layer targetLayer) {
-	if (cc == null || cc.getMiniBatchSize() != valuesProvider.getColumns()) {
-	    cc = new AparapiMaxPooling2DCC((Subsampling2DConnection) connections.get(0), valuesProvider.getColumns());
-	}
+        if (cc == null || cc.getMiniBatchSize() != valuesProvider.getColumns()) {
+            cc = new AparapiMaxPooling2DCC((Subsampling2DConnection) connections.get(0), valuesProvider.getColumns());
+        }
 
-	cc.calculate(connections, valuesProvider, targetLayer);
+        cc.calculate(connections, valuesProvider, targetLayer);
     }
 
     public static class AparapiMaxPooling2DCC extends AparapiSubsampling2D {
 
-	private static final long serialVersionUID = -2393526660090301257L;
+        private static final long serialVersionUID = -2393526660090301257L;
 
-	public AparapiMaxPooling2DCC(Subsampling2DConnection c, int miniBatchSize) {
-	    super(c, miniBatchSize);
-	}
+        public AparapiMaxPooling2DCC(Subsampling2DConnection c, int miniBatchSize) {
+            super(c, miniBatchSize);
+        }
 
-	@Override
-	protected void pool(int inputStartIndex) {
-	    int rl = regionLength;
-	    int miniBatch = miniBatchSize;
-	    float max = 0;
+        @Override
+        protected void pool(int inputStartIndex) {
+            int rl = regionLength;
+            int miniBatch = miniBatchSize;
+            float max = 0;
 
-	    for (int i = 0; i < miniBatch; i++) {
-		max = input[(inputStartIndex + featureMapOffsets[0]) * miniBatch + i];
-		for (int j = 1; j < rl; j++) {
-		    max = max(input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i], max);
-		}
+            for (int i = 0; i < miniBatch; i++) {
+                max = input[(inputStartIndex + featureMapOffsets[0]) * miniBatch + i];
+                for (int j = 1; j < rl; j++) {
+                    max = max(input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i], max);
+                }
 
-		output[getGlobalId() * miniBatch + i] = max;
-	    }
-	}
+                output[getGlobalId() * miniBatch + i] = max;
+            }
+        }
     }
 }

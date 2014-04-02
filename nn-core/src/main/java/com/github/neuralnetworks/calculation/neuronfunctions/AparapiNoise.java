@@ -11,21 +11,21 @@ public class AparapiNoise extends XORShiftKernel implements MatrixFunction {
     private float[] inputOutput;
 
     public AparapiNoise(int maximumRange, float corruptionLevel) {
-	super(maximumRange);
-	this.corruptionLevel = corruptionLevel;
+        super(maximumRange);
+        this.corruptionLevel = corruptionLevel;
     }
 
     @Override
     public void value(Matrix inputOutput) {
-	this.inputOutput = inputOutput.getElements();
-	execute(this.inputOutput.length);
+        this.inputOutput = inputOutput.getElements();
+        execute(this.inputOutput.length);
     }
 
     @Override
     public void run() {
-	int id = getGlobalId();
-	if (random01() < corruptionLevel) {
-	    inputOutput[id] = 0;
-	}
+        int id = getGlobalId();
+        if (random01() < corruptionLevel) {
+            inputOutput[id] = 0;
+        }
     }
 }

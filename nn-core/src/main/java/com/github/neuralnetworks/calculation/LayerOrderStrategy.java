@@ -15,13 +15,13 @@ public interface LayerOrderStrategy extends Serializable {
 
     public static class ConnectionCandidate {
 
-	public Connections connection;
-	public Layer target;
+        public Connections connection;
+        public Layer target;
 
-	public ConnectionCandidate(Connections connection, Layer target) {
-	    super();
-	    this.connection = connection;
-	    this.target = target;
-	}
+        public ConnectionCandidate(Connections connection, Layer target) {
+            super();
+            this.connection = connection;
+            this.target = target;
+        }
     }
 }

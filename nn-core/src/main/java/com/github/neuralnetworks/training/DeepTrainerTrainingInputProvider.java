@@ -22,37 +22,37 @@ public class DeepTrainerTrainingInputProvider implements TrainingInputProvider {
     private ValuesProvider layerResults;
 
     public DeepTrainerTrainingInputProvider(TrainingInputProvider inputProvider, DNN<?> dnn, NeuralNetwork currentNN) {
-	super();
-	this.inputProvider = inputProvider;
-	this.dnn = dnn;
-	this.currentNN = currentNN;
-	this.calculatedLayers = new HashSet<>();
-	this.layerResults = new ValuesProvider();
+        super();
+        this.inputProvider = inputProvider;
+        this.dnn = dnn;
+        this.currentNN = currentNN;
+        this.calculatedLayers = new HashSet<>();
+        this.layerResults = new ValuesProvider();
     }
 
     @Override
     public TrainingInputData getNextInput() {
-	TrainingInputData input = inputProvider.getNextInput();
+        TrainingInputData input = inputProvider.getNextInput();
 
-	if (input != null && dnn.getFirstNeuralNetwork() != currentNN) {
-	    layerResults.addValues(dnn.getInputLayer(), input.getInput());
-	    calculatedLayers.clear();
-	    calculatedLayers.add(dnn.getInputLayer());
-	    dnn.getLayerCalculator().calculate(dnn, currentNN.getInputLayer(), calculatedLayers, layerResults);
-	    input = new TrainingInputDataImpl(layerResults.getValues(currentNN.getInputLayer()), input.getTarget());
-	}
+        if (input != null && dnn.getFirstNeuralNetwork() != currentNN) {
+            layerResults.addValues(dnn.getInputLayer(), input.getInput());
+            calculatedLayers.clear();
+            calculatedLayers.add(dnn.getInputLayer());
+            dnn.getLayerCalculator().calculate(dnn, currentNN.getInputLayer(), calculatedLayers, layerResults);
+            input = new TrainingInputDataImpl(layerResults.getValues(currentNN.getInputLayer()), input.getTarget());
+        }
 
-	return input;
+        return input;
     }
 
     @Override
     public int getInputSize() {
-	return inputProvider.getInputSize();
+        return inputProvider.getInputSize();
     }
 
     @Override
     public void reset() {
-	inputProvider.reset();
+        inputProvider.reset();
     }
 
     public TrainingInputProvider getInputProvider() {

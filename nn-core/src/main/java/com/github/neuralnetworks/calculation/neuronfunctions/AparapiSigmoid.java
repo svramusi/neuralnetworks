@@ -16,25 +16,25 @@ public class AparapiSigmoid extends ConnectionCalculatorFullyConnected {
 
     @Override
     protected ConnectionCalculator createInputFunction(SortedMap<GraphConnections, Integer> inputConnections, ValuesProvider valuesProvider, Layer targetLayer) {
-	return new AparapiSigmoidFunction(inputConnections, valuesProvider.getColumns(), targetLayer);
+        return new AparapiSigmoidFunction(inputConnections, valuesProvider.getColumns(), targetLayer);
     }
 
     public static class AparapiSigmoidFunction extends AparapiWeightedSum {
 
-	public AparapiSigmoidFunction(SortedMap<GraphConnections, Integer> inputConnections, int miniBatchSize, Layer targetLayer) {
-	    super(inputConnections, miniBatchSize, targetLayer);
-	}
+        public AparapiSigmoidFunction(SortedMap<GraphConnections, Integer> inputConnections, int miniBatchSize, Layer targetLayer) {
+            super(inputConnections, miniBatchSize, targetLayer);
+        }
 
-	private static final long serialVersionUID = -3409078521599849086L;
+        private static final long serialVersionUID = -3409078521599849086L;
 
-	@Override
-	protected void after() {
-	    int mb = miniBatchSize;
-	    int outputId = getGlobalId() * mb;
+        @Override
+        protected void after() {
+            int mb = miniBatchSize;
+            int outputId = getGlobalId() * mb;
 
-	    for (int i = 0; i < mb; i++) {
-		output[outputId + i] = 1 / (1 + exp(-output[outputId + i]));
-	    }
-	}
+            for (int i = 0; i < mb; i++) {
+                output[outputId + i] = 1 / (1 + exp(-output[outputId + i]));
+            }
+        }
     }
 }

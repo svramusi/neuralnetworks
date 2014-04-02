@@ -13,9 +13,9 @@ public class ThresholdFunction implements MatrixFunction {
 
     @Override
     public void value(Matrix inputOutput) {
-	float[] elements = inputOutput.getElements();
-	for (int i = 0; i < elements.length; i++) {
-	    elements[i] = elements[i] >= threshold ? 1 : 0;
-	}
+        float[] elements = inputOutput.getElements();
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = elements[i] >= threshold ? 1 : 0;
+        }
     }
 }

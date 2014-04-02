@@ -5,7 +5,8 @@ import java.io.Serializable;
 import com.amd.aparapi.Kernel;
 
 /**
- * Aparapi weight udpates for the connections between the hidden and the visible layers
+ * Aparapi weight udpates for the connections between the hidden and the visible
+ * layers
  */
 public class CDWeightUpdatesKernel extends Kernel implements Serializable {
 
@@ -24,48 +25,49 @@ public class CDWeightUpdatesKernel extends Kernel implements Serializable {
     private final float l1weightDecay;
     private final float l2weightDecay;
 
-    public CDWeightUpdatesKernel(float[] posPhaseVisible, float[] posPhaseHidden, float[] negPhaseVisible, float[] negPhaseHidden, float[] weights, int weightColumns, float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int miniBatchSize) {
-	super();
-	this.posPhaseVisible = posPhaseVisible;
-	this.posPhaseHidden = posPhaseHidden;
-	this.negPhaseVisible = negPhaseVisible;
-	this.negPhaseHidden = negPhaseHidden;
-	this.weights = weights;
-	this.weightUpdates = new float[weights.length];
-	this.weightColumns = weightColumns;
-	this.learningRate = learningRate;
-	this.momentum = momentum;
-	this.l1weightDecay = l1weightDecay;
-	this.l2weightDecay = l2weightDecay;
-	this.miniBatchSize = miniBatchSize;
+    public CDWeightUpdatesKernel(float[] posPhaseVisible, float[] posPhaseHidden, float[] negPhaseVisible, float[] negPhaseHidden, float[] weights, int weightColumns,
+            float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int miniBatchSize) {
+        super();
+        this.posPhaseVisible = posPhaseVisible;
+        this.posPhaseHidden = posPhaseHidden;
+        this.negPhaseVisible = negPhaseVisible;
+        this.negPhaseHidden = negPhaseHidden;
+        this.weights = weights;
+        this.weightUpdates = new float[weights.length];
+        this.weightColumns = weightColumns;
+        this.learningRate = learningRate;
+        this.momentum = momentum;
+        this.l1weightDecay = l1weightDecay;
+        this.l2weightDecay = l2weightDecay;
+        this.miniBatchSize = miniBatchSize;
     }
 
     @Override
     public void run() {
-	int id = getGlobalId();
-	int mbs = miniBatchSize;
-	int wc = weightColumns;
-	int hiddenId = id * mbs;
-	float lr = learningRate;
-	float mm = momentum;
+        int id = getGlobalId();
+        int mbs = miniBatchSize;
+        int wc = weightColumns;
+        int hiddenId = id * mbs;
+        float lr = learningRate;
+        float mm = momentum;
 
-	int visibleId = 0, weightId = 0;
-	float weightUpdate = 0, weight = 0;
+        int visibleId = 0, weightId = 0;
+        float weightUpdate = 0, weight = 0;
 
-	for (int i = 0; i < wc; i++) {
-	    visibleId = i * mbs;
-	    weightUpdate = 0;
+        for (int i = 0; i < wc; i++) {
+            visibleId = i * mbs;
+            weightUpdate = 0;
 
-	    for (int j = 0; j < mbs; j++) {
-		weightUpdate += posPhaseHidden[hiddenId + j] * posPhaseVisible[visibleId + j] - negPhaseHidden[hiddenId + j] * negPhaseVisible[visibleId + j];
-	    }
+            for (int j = 0; j < mbs; j++) {
+                weightUpdate += posPhaseHidden[hiddenId + j] * posPhaseVisible[visibleId + j] - negPhaseHidden[hiddenId + j] * negPhaseVisible[visibleId + j];
+            }
 
-	    weightId = id * wc + i;
-	    weight = weights[weightId];
-	    weightUpdate = lr * (weightUpdate /*/ mbs*/ - l1weightDecay * abs(weight) - l2weightDecay * weight * weight / 2) + mm * weightUpdates[weightId];
-	    weights[weightId] += weightUpdate;
-	    weightUpdates[weightId] = weightUpdate;
-	}
+            weightId = id * wc + i;
+            weight = weights[weightId];
+            weightUpdate = lr * (weightUpdate /* / mbs */- l1weightDecay * abs(weight) - l2weightDecay * weight * weight / 2) + mm * weightUpdates[weightId];
+            weights[weightId] += weightUpdate;
+            weightUpdates[weightId] = weightUpdate;
+        }
     }
 
     public float[] getPosPhaseHidden() {
@@ -107,9 +109,9 @@ public class CDWeightUpdatesKernel extends Kernel implements Serializable {
     public float getl1WeightDecay() {
         return l1weightDecay;
     }
-    
+
     public float getl2WeightDecay() {
-	return l1weightDecay;
+        return l1weightDecay;
     }
 
     public int getMiniBatchSize() {

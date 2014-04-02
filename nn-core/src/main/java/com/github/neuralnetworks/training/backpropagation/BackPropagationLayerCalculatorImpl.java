@@ -21,25 +21,25 @@ public class BackPropagationLayerCalculatorImpl extends LayerCalculatorBase impl
     private ValuesProvider activations;
 
     public BackPropagationLayerCalculatorImpl() {
-	super();
+        super();
     }
 
     @Override
     public void backpropagate(NeuralNetwork nn, Set<Layer> calculatedLayers, ValuesProvider activations, ValuesProvider results) {
-	this.activations = activations;
+        this.activations = activations;
 
-	List<ConnectionCandidate> connections = new BreadthFirstOrderStrategy(nn, nn.getOutputLayer()).order();
+        List<ConnectionCandidate> connections = new BreadthFirstOrderStrategy(nn, nn.getOutputLayer()).order();
 
-	calculate(results, connections, nn);
+        calculate(results, connections, nn);
     }
 
     @Override
     public ConnectionCalculator getConnectionCalculator(Layer layer) {
-	ConnectionCalculator cc = super.getConnectionCalculator(layer);
-	if (cc instanceof BackPropagationConnectionCalculator) {
-	    ((BackPropagationConnectionCalculator) cc).setActivations(activations);
-	}
+        ConnectionCalculator cc = super.getConnectionCalculator(layer);
+        if (cc instanceof BackPropagationConnectionCalculator) {
+            ((BackPropagationConnectionCalculator) cc).setActivations(activations);
+        }
 
-	return cc;
+        return cc;
     }
 }

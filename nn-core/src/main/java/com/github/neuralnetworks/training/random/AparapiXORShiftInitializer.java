@@ -12,46 +12,46 @@ public class AparapiXORShiftInitializer implements RandomInitializer {
     protected float start;
     protected float range;
     protected Map<Integer, XORShift> kernels = new HashMap<>();
-    
+
     public AparapiXORShiftInitializer() {
-	super();
-	this.start = 0;
-	this.range = 1;
+        super();
+        this.start = 0;
+        this.range = 1;
     }
 
     public AparapiXORShiftInitializer(float start, float end) {
-	super();
-	this.start = start;
-	this.range = end - start;
+        super();
+        this.start = start;
+        this.range = end - start;
     }
 
     @Override
     public void initialize(float[] array) {
-	XORShift kernel = kernels.get(array.length);
-	if (kernel == null) {
-	    kernels.put(array.length, kernel = new XORShift(array.length, start, range));
-	}
+        XORShift kernel = kernels.get(array.length);
+        if (kernel == null) {
+            kernels.put(array.length, kernel = new XORShift(array.length, start, range));
+        }
 
-	kernel.array = array;
+        kernel.array = array;
 
-	Environment.getInstance().getExecutionStrategy().execute(kernel, array.length);
+        Environment.getInstance().getExecutionStrategy().execute(kernel, array.length);
     }
 
     private static class XORShift extends XORShiftKernel {
 
-	private float[] array;
-	private final float start;
-	private final float range;
+        private float[] array;
+        private final float start;
+        private final float range;
 
-	public XORShift(int maximumRange, float start, float range) {
-	    super(maximumRange);
-	    this.start = start;
-	    this.range = range;
-	}
+        public XORShift(int maximumRange, float start, float range) {
+            super(maximumRange);
+            this.start = start;
+            this.range = range;
+        }
 
-	@Override
-	public void run() {
-	    array[getGlobalId()] = start + randomGaussian() * range;
-	}
+        @Override
+        public void run() {
+            array[getGlobalId()] = start + randomGaussian() * range;
+        }
     }
 }

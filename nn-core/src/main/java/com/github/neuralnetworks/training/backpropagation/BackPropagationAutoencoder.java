@@ -16,20 +16,20 @@ public class BackPropagationAutoencoder extends BackPropagationTrainer<Autoencod
     private AutoencoderTrainingInputData autoencoderTrainingInputData;
 
     public BackPropagationAutoencoder() {
-	super();
+        super();
     }
 
     public BackPropagationAutoencoder(Properties properties) {
-	super(properties);
+        super(properties);
     }
 
     @Override
     protected void learnInput(TrainingInputData data, int batch) {
-	if (autoencoderTrainingInputData == null) {
-	    autoencoderTrainingInputData = new AutoencoderTrainingInputData();
-	}
-	autoencoderTrainingInputData.setInputOutput(data.getInput());
-	super.learnInput(autoencoderTrainingInputData, batch);
+        if (autoencoderTrainingInputData == null) {
+            autoencoderTrainingInputData = new AutoencoderTrainingInputData();
+        }
+        autoencoderTrainingInputData.setInputOutput(data.getInput());
+        super.learnInput(autoencoderTrainingInputData, batch);
     }
 
     /**
@@ -37,28 +37,28 @@ public class BackPropagationAutoencoder extends BackPropagationTrainer<Autoencod
      */
     private static class AutoencoderTrainingInputData implements TrainingInputData {
 
-	private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-	private Matrix input;
-	private Matrix target;
+        private Matrix input;
+        private Matrix target;
 
-	@Override
-	public Matrix getInput() {
-	    return input;
-	}
+        @Override
+        public Matrix getInput() {
+            return input;
+        }
 
-	@Override
-	public Matrix getTarget() {
-	    return target;
-	}
+        @Override
+        public Matrix getTarget() {
+            return target;
+        }
 
-	public void setInputOutput(Matrix inputOutput) {
-	    this.input = inputOutput;
-	    if (target == null || target.getElements().length != input.getElements().length) {
-		target = new Matrix(input.getRows(), input.getColumns());
-	    }
+        public void setInputOutput(Matrix inputOutput) {
+            this.input = inputOutput;
+            if (target == null || target.getElements().length != input.getElements().length) {
+                target = new Matrix(input.getRows(), input.getColumns());
+            }
 
-	    System.arraycopy(input.getElements(), 0, target.getElements(), 0, target.getElements().length);
-	}
+            System.arraycopy(input.getElements(), 0, target.getElements(), 0, target.getElements().length);
+        }
     }
 }

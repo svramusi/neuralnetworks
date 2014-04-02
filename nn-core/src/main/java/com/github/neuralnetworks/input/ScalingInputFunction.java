@@ -13,8 +13,8 @@ public class ScalingInputFunction implements MatrixFunction {
     private float scale;
 
     public ScalingInputFunction(float scale) {
-	super();
-	this.scale = scale;
+        super();
+        this.scale = scale;
     }
 
     public float getScale() {
@@ -27,9 +27,9 @@ public class ScalingInputFunction implements MatrixFunction {
 
     @Override
     public void value(Matrix inputOutput) {
-	float[] elements = inputOutput.getElements();
-	for (int i = 0; i < elements.length; i++) {
-	    elements[i] /= scale;
-	}
+        float[] elements = inputOutput.getElements();
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] /= scale;
+        }
     }
 }

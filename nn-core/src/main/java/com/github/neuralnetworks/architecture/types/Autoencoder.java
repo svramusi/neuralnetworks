@@ -15,43 +15,43 @@ public class Autoencoder extends NeuralNetworkImpl {
     private Layer hiddenLayer;
 
     public Autoencoder(int inputUnitCount, int hiddenUnitCount, boolean addBias) {
-	this(new Layer(), new Layer(), new Layer(), inputUnitCount, hiddenUnitCount, addBias);
+        this(new Layer(), new Layer(), new Layer(), inputUnitCount, hiddenUnitCount, addBias);
     }
 
     public Autoencoder(Layer inputLayer, Layer hiddenLayer, Layer outputLayer, int inputUnitCount, int hiddenUnitCount, boolean addBias) {
-	this.hiddenLayer = hiddenLayer;
+        this.hiddenLayer = hiddenLayer;
 
-	// layers are added
-	addLayer(inputLayer);
-	NNFactory.addFullyConnectedLayer(this, hiddenLayer, inputUnitCount, hiddenUnitCount, addBias);
-	NNFactory.addFullyConnectedLayer(this, outputLayer, hiddenUnitCount, inputUnitCount, addBias);
+        // layers are added
+        addLayer(inputLayer);
+        NNFactory.addFullyConnectedLayer(this, hiddenLayer, inputUnitCount, hiddenUnitCount, addBias);
+        NNFactory.addFullyConnectedLayer(this, outputLayer, hiddenUnitCount, inputUnitCount, addBias);
     }
 
     public Layer getHiddenBiasLayer() {
-	Layer hiddenLayer = getHiddenLayer();
-	for (Connections c : hiddenLayer.getConnections()) {
-	    Layer l = Util.getOppositeLayer(c, hiddenLayer);
-	    if (Util.isBias(l)) {
-		return l;
-	    }
-	}
+        Layer hiddenLayer = getHiddenLayer();
+        for (Connections c : hiddenLayer.getConnections()) {
+            Layer l = Util.getOppositeLayer(c, hiddenLayer);
+            if (Util.isBias(l)) {
+                return l;
+            }
+        }
 
-	return null;
+        return null;
     }
 
     public Layer getOutputBiasLayer() {
-	Layer outputLayer = getOutputLayer();
-	for (Connections c : outputLayer.getConnections()) {
-	    Layer l = Util.getOppositeLayer(c, outputLayer);
-	    if (Util.isBias(l)) {
-		return l;
-	    }
-	}
+        Layer outputLayer = getOutputLayer();
+        for (Connections c : outputLayer.getConnections()) {
+            Layer l = Util.getOppositeLayer(c, outputLayer);
+            if (Util.isBias(l)) {
+                return l;
+            }
+        }
 
-	return null;
+        return null;
     }
 
     public Layer getHiddenLayer() {
-	return hiddenLayer;
+        return hiddenLayer;
     }
 }

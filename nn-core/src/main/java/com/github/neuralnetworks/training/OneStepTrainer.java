@@ -8,7 +8,7 @@ import com.github.neuralnetworks.util.Properties;
 
 /**
  * Base trainer for learning one input after another
- *
+ * 
  * @param <N>
  */
 public abstract class OneStepTrainer<N extends NeuralNetwork> extends Trainer<N> {
@@ -18,37 +18,38 @@ public abstract class OneStepTrainer<N extends NeuralNetwork> extends Trainer<N>
     private boolean stopTraining;
 
     public OneStepTrainer() {
-	super();
+        super();
     }
 
     public OneStepTrainer(Properties properties) {
-	super(properties);
+        super(properties);
     }
 
     @Override
     public void train() {
-	triggerEvent(new TrainingStartedEvent(this));
+        triggerEvent(new TrainingStartedEvent(this));
 
-	stopTraining = false;
+        stopTraining = false;
 
-	if (getRandomInitializer() != null) {
-	    getRandomInitializer().initialize(getNeuralNetwork());;
-	}
+        if (getRandomInitializer() != null) {
+            getRandomInitializer().initialize(getNeuralNetwork());
+            ;
+        }
 
-	getTrainingInputProvider().reset();
+        getTrainingInputProvider().reset();
 
-	int batch = 0;
-	TrainingInputData input = null;
-	while ((input = getTrainingInputProvider().getNextInput()) != null && !stopTraining) {
-	    learnInput(input, batch++);
-	    triggerEvent(new MiniBatchFinishedEvent(this, input, null, batch));
-	}
+        int batch = 0;
+        TrainingInputData input = null;
+        while ((input = getTrainingInputProvider().getNextInput()) != null && !stopTraining) {
+            learnInput(input, batch++);
+            triggerEvent(new MiniBatchFinishedEvent(this, input, null, batch));
+        }
 
-	triggerEvent(new TrainingFinishedEvent(this));
+        triggerEvent(new TrainingFinishedEvent(this));
     }
 
     public void stopTraining() {
-	stopTraining = true;
+        stopTraining = true;
     }
 
     /**

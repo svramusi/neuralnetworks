@@ -7,7 +7,9 @@ import com.github.neuralnetworks.architecture.NeuralNetwork;
 import com.github.neuralnetworks.calculation.ValuesProvider;
 
 /**
- * Base interface for layer calculator. The difference with the feedforward layer calculator is the "activations" parameter, which contains the activations from the feedforward phse
+ * Base interface for layer calculator. The difference with the feedforward
+ * layer calculator is the "activations" parameter, which contains the
+ * activations from the feedforward phse
  */
 public interface BackPropagationLayerCalculator {
     public void backpropagate(NeuralNetwork nn, Set<Layer> calculatedLayers, ValuesProvider activations, ValuesProvider results);

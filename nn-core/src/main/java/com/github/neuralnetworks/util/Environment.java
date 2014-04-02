@@ -25,42 +25,42 @@ public class Environment {
     private boolean debug;
 
     private Environment() {
-	executionStrategy = new DefaultKernelExecution();
-	debug = true;
+        executionStrategy = new DefaultKernelExecution();
+        debug = true;
     }
 
     public KernelExecutionStrategy getExecutionStrategy() {
-	return executionStrategy;
+        return executionStrategy;
     }
 
     public void setExecutionMode(EXECUTION_MODE executionMode) {
-	switch (executionMode) {
-	case CPU:
-	    this.executionStrategy = new CPUKernelExecution();
-	    break;
-	case SEQ:
-	    this.executionStrategy = new SeqKernelExecution();
-	    break;
-	case JTP:
-	    this.executionStrategy = new JTPKernelExecution();
-	    break;
-	case GPU:
-	    this.executionStrategy = new GPUKernelExecution();
-	    break;
-	default:
-	    this.executionStrategy = new DefaultKernelExecution();
-	}
+        switch (executionMode) {
+        case CPU:
+            this.executionStrategy = new CPUKernelExecution();
+            break;
+        case SEQ:
+            this.executionStrategy = new SeqKernelExecution();
+            break;
+        case JTP:
+            this.executionStrategy = new JTPKernelExecution();
+            break;
+        case GPU:
+            this.executionStrategy = new GPUKernelExecution();
+            break;
+        default:
+            this.executionStrategy = new DefaultKernelExecution();
+        }
     }
 
     public static Environment getInstance() {
-	return singleton;
+        return singleton;
     }
 
     public boolean isDebug() {
-	return debug;
+        return debug;
     }
 
     public void setDebug(boolean debug) {
-	this.debug = debug;
+        this.debug = debug;
     }
 }

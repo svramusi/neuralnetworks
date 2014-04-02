@@ -20,35 +20,35 @@ public class AparapiAveragePooling2D implements ConnectionCalculator {
 
     @Override
     public void calculate(List<Connections> connections, ValuesProvider valuesProvider, Layer targetLayer) {
-	if (cc == null || cc.getMiniBatchSize() != valuesProvider.getColumns()) {
-	    cc = new AparapiAveragePooling2DCC((Subsampling2DConnection) connections.get(0), valuesProvider.getColumns());
-	}
+        if (cc == null || cc.getMiniBatchSize() != valuesProvider.getColumns()) {
+            cc = new AparapiAveragePooling2DCC((Subsampling2DConnection) connections.get(0), valuesProvider.getColumns());
+        }
 
-	cc.calculate(connections, valuesProvider, targetLayer);
+        cc.calculate(connections, valuesProvider, targetLayer);
     }
 
     public static class AparapiAveragePooling2DCC extends AparapiSubsampling2D {
 
-	private static final long serialVersionUID = -2393526660090301257L;
+        private static final long serialVersionUID = -2393526660090301257L;
 
-	public AparapiAveragePooling2DCC(Subsampling2DConnection c, int miniBatchSize) {
-	    super(c, miniBatchSize);
-	}
+        public AparapiAveragePooling2DCC(Subsampling2DConnection c, int miniBatchSize) {
+            super(c, miniBatchSize);
+        }
 
-	@Override
-	protected void pool(int inputStartIndex) {
-	    int rl = regionLength;
-	    int miniBatch = miniBatchSize;
-	    float sum = 0;
+        @Override
+        protected void pool(int inputStartIndex) {
+            int rl = regionLength;
+            int miniBatch = miniBatchSize;
+            float sum = 0;
 
-	    for (int i = 0; i < miniBatch; i++) {
-		sum = 0;
-		for (int j = 0; j < rl; j++) {
-		    sum += input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i];
-		}
+            for (int i = 0; i < miniBatch; i++) {
+                sum = 0;
+                for (int j = 0; j < rl; j++) {
+                    sum += input[(inputStartIndex + featureMapOffsets[j]) * miniBatch + i];
+                }
 
-		output[getGlobalId() * miniBatch + i] = sum / rl;
-	    }
-	}
+                output[getGlobalId() * miniBatch + i] = sum / rl;
+            }
+        }
     }
 }

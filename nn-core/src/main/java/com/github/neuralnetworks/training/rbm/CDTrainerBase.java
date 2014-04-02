@@ -9,8 +9,9 @@ import com.github.neuralnetworks.util.Constants;
 import com.github.neuralnetworks.util.Properties;
 
 /**
- * Base class for Contrastive Divergence
- * requires RBMLayerCalculator as the layer calculator. This allows for different implementations of the layer calculator, like GPU/CPU for example
+ * Base class for Contrastive Divergence requires RBMLayerCalculator as the
+ * layer calculator. This allows for different implementations of the layer
+ * calculator, like GPU/CPU for example
  */
 public abstract class CDTrainerBase extends OneStepTrainer<RBM> {
 
@@ -37,24 +38,24 @@ public abstract class CDTrainerBase extends OneStepTrainer<RBM> {
     private Matrix negPhaseHidden;
 
     public CDTrainerBase(Properties properties) {
-	super(properties);
+        super(properties);
     }
 
     @Override
     protected void learnInput(TrainingInputData data, int batch) {
-	RBM nn = getNeuralNetwork();
+        RBM nn = getNeuralNetwork();
 
-	posPhaseVisible = data.getInput();
-	if (negPhaseVisible == null || negPhaseVisible.getColumns() != posPhaseVisible.getColumns()) {
-	    negPhaseVisible = new Matrix(posPhaseVisible.getRows(), posPhaseVisible.getColumns());
-	    posPhaseHidden = new Matrix(nn.getMainConnections().getConnectionGraph().getRows(), posPhaseVisible.getColumns());
-	    negPhaseHidden = new Matrix(nn.getMainConnections().getConnectionGraph().getRows(), posPhaseVisible.getColumns());
-	}
+        posPhaseVisible = data.getInput();
+        if (negPhaseVisible == null || negPhaseVisible.getColumns() != posPhaseVisible.getColumns()) {
+            negPhaseVisible = new Matrix(posPhaseVisible.getRows(), posPhaseVisible.getColumns());
+            posPhaseHidden = new Matrix(nn.getMainConnections().getConnectionGraph().getRows(), posPhaseVisible.getColumns());
+            negPhaseHidden = new Matrix(nn.getMainConnections().getConnectionGraph().getRows(), posPhaseVisible.getColumns());
+        }
 
-	getLayerCalculator().gibbsSampling(nn, posPhaseVisible, posPhaseHidden, negPhaseVisible, negPhaseHidden, getGibbsSamplingCount(), batch == 0 ? true : getResetRBM(), true);
+        getLayerCalculator().gibbsSampling(nn, posPhaseVisible, posPhaseHidden, negPhaseVisible, negPhaseHidden, getGibbsSamplingCount(), batch == 0 ? true : getResetRBM(), true);
 
-	// update weights
-	updateWeights(posPhaseVisible, posPhaseHidden, negPhaseVisible, negPhaseHidden);
+        // update weights
+        updateWeights(posPhaseVisible, posPhaseHidden, negPhaseVisible, negPhaseHidden);
     }
 
     public Matrix getPosPhaseVisible() {
@@ -74,23 +75,23 @@ public abstract class CDTrainerBase extends OneStepTrainer<RBM> {
     }
 
     public RBMLayerCalculator getLayerCalculator() {
-	return properties.getParameter(Constants.LAYER_CALCULATOR);
+        return properties.getParameter(Constants.LAYER_CALCULATOR);
     }
 
     public void setLayerCalculator(RBMLayerCalculator layerCalculator) {
-	properties.setParameter(Constants.LAYER_CALCULATOR, layerCalculator);
+        properties.setParameter(Constants.LAYER_CALCULATOR, layerCalculator);
     }
-    
+
     public Boolean getResetRBM() {
-	return properties.getParameter(Constants.RESET_RBM);
+        return properties.getParameter(Constants.RESET_RBM);
     }
-    
+
     public void setResetRBM(boolean resetRBM) {
-	properties.setParameter(Constants.RESET_RBM, resetRBM);
+        properties.setParameter(Constants.RESET_RBM, resetRBM);
     }
 
     public int getGibbsSamplingCount() {
-	return properties.containsKey(Constants.GIBBS_SAMPLING_COUNT) ? (int) properties.get(Constants.GIBBS_SAMPLING_COUNT) : 1;
+        return properties.containsKey(Constants.GIBBS_SAMPLING_COUNT) ? (int) properties.get(Constants.GIBBS_SAMPLING_COUNT) : 1;
     }
 
     protected abstract void updateWeights(Matrix posPhaseVisible, Matrix posPhaseHidden, Matrix negPhaseVisible, Matrix negPhaseHidden);

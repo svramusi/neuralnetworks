@@ -12,6 +12,6 @@ public class TrainingEvent extends EventObject {
     private static final long serialVersionUID = 1171094415041968041L;
 
     public TrainingEvent(Trainer<?> source) {
-	super(source);
+        super(source);
     }
 }

@@ -10,10 +10,10 @@ public class MersenneTwisterRandomInitializer extends RandomInitializerImpl {
     private static final long serialVersionUID = 1L;
 
     public MersenneTwisterRandomInitializer() {
-	super(new MersenneTwisterRNG());
+        super(new MersenneTwisterRNG());
     }
 
     public MersenneTwisterRandomInitializer(float start, float end) {
-	super(new MersenneTwisterRNG(), start, end);
+        super(new MersenneTwisterRNG(), start, end);
     }
 }

@@ -3,8 +3,9 @@ package com.github.neuralnetworks.architecture;
 import java.io.Serializable;
 
 /**
- * Simple matrix representation with one-dimensional array.
- * This is required, because Aparapi supports only one-dim arrays (otherwise the execution is transferred to the cpu)
+ * Simple matrix representation with one-dimensional array. This is required,
+ * because Aparapi supports only one-dim arrays (otherwise the execution is
+ * transferred to the cpu)
  */
 public class Matrix implements Serializable {
 
@@ -14,60 +15,60 @@ public class Matrix implements Serializable {
     private int columns;
 
     public Matrix() {
-	super();
+        super();
     }
 
     public Matrix(Matrix copy) {
-	super();
-	this.elements = new float[copy.elements.length];
-	this.columns = copy.columns;
+        super();
+        this.elements = new float[copy.elements.length];
+        this.columns = copy.columns;
     }
 
     public Matrix(float[] elements, int columns) {
-	super();
-	this.elements = elements;
-	this.columns = columns;
+        super();
+        this.elements = elements;
+        this.columns = columns;
     }
 
     public Matrix(int rows, int columns) {
-	super();
-	this.elements = new float[rows * columns];
-	this.columns = columns;
+        super();
+        this.elements = new float[rows * columns];
+        this.columns = columns;
     }
 
     public float[] getElements() {
-	return elements;
+        return elements;
     }
 
     public void setElements(float[] elements) {
-	this.elements = elements;
+        this.elements = elements;
     }
 
     public int getColumns() {
-	return columns;
+        return columns;
     }
 
     public void setColumns(int columns) {
-	this.columns = columns;
+        this.columns = columns;
     }
 
     public int getRows() {
-	return this.elements.length / this.columns;
+        return this.elements.length / this.columns;
     }
 
     public void set(int row, int column, float value) {
-	elements[row * columns + column] = value;
+        elements[row * columns + column] = value;
     }
 
     public float get(int row, int column) {
-	return elements[row * columns + column];
+        return elements[row * columns + column];
     }
 
     public int getColumn(int index) {
-	return index % columns;
+        return index % columns;
     }
 
     public int getRow(int index) {
-	return index / columns;
+        return index / columns;
     }
 }

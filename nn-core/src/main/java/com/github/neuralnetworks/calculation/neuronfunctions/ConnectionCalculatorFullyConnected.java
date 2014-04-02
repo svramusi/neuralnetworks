@@ -49,131 +49,131 @@ public class ConnectionCalculatorFullyConnected implements ConnectionCalculator,
     protected List<MatrixFunction> activationFunctions;
 
     public ConnectionCalculatorFullyConnected() {
-	super();
+        super();
     }
 
     @Override
     public void calculate(List<Connections> connections, ValuesProvider valuesProvider, Layer targetLayer) {
-	if (connections.size() > 0) {
-	    List<Connections> notBias = new ArrayList<>();
-	    Connections bias = null;
+        if (connections.size() > 0) {
+            List<Connections> notBias = new ArrayList<>();
+            Connections bias = null;
 
-	    for (Connections c : connections) {
-		// bias layer scenarios
-		if (Util.isBias(c.getInputLayer())) {
-		    bias = c;
-		} else {
-		    notBias.add(c);
-		}
-	    }
+            for (Connections c : connections) {
+                // bias layer scenarios
+                if (Util.isBias(c.getInputLayer())) {
+                    bias = c;
+                } else {
+                    notBias.add(c);
+                }
+            }
 
-	    if (notBias.size() > 0) {
-		if (preTransferFunctions != null && preTransferFunctions.size() > 0) {
-		    for (MatrixFunction f : preTransferFunctions) {
-			for (Connections c : connections) {
-			    if (!Util.isBias(c.getInputLayer())) {
-				f.value(valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c));
-			    }
-			}
-		    }
-		}
+            if (notBias.size() > 0) {
+                if (preTransferFunctions != null && preTransferFunctions.size() > 0) {
+                    for (MatrixFunction f : preTransferFunctions) {
+                        for (Connections c : connections) {
+                            if (!Util.isBias(c.getInputLayer())) {
+                                f.value(valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c));
+                            }
+                        }
+                    }
+                }
 
-		calculateBias(bias, valuesProvider);
+                calculateBias(bias, valuesProvider);
 
-		// new input function is required
-		if (inputFunction == null || targetLayer != currentLayer || miniBatchSize != valuesProvider.getColumns()) {
-		    miniBatchSize = valuesProvider.getColumns();
-		    currentLayer = targetLayer;
-		    SortedMap<GraphConnections, Integer> map = new TreeMap<>();
-		    for (Connections c : notBias) {
-			map.put((GraphConnections) c, valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c).getElements().length);
-		    }
+                // new input function is required
+                if (inputFunction == null || targetLayer != currentLayer || miniBatchSize != valuesProvider.getColumns()) {
+                    miniBatchSize = valuesProvider.getColumns();
+                    currentLayer = targetLayer;
+                    SortedMap<GraphConnections, Integer> map = new TreeMap<>();
+                    for (Connections c : notBias) {
+                        map.put((GraphConnections) c, valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c).getElements().length);
+                    }
 
-		    inputFunction = createInputFunction(map, valuesProvider, targetLayer);
-		}
+                    inputFunction = createInputFunction(map, valuesProvider, targetLayer);
+                }
 
-		inputFunction.calculate(notBias, valuesProvider, targetLayer);
+                inputFunction.calculate(notBias, valuesProvider, targetLayer);
 
-		if (activationFunctions != null) {
-		    for (MatrixFunction f : activationFunctions) {
-			f.value(valuesProvider.getValues(targetLayer, notBias));
-		    }
-		}
-	    }
-	}
+                if (activationFunctions != null) {
+                    for (MatrixFunction f : activationFunctions) {
+                        f.value(valuesProvider.getValues(targetLayer, notBias));
+                    }
+                }
+            }
+        }
     }
 
     protected void calculateBias(Connections bias, ValuesProvider valuesProvider) {
-	if (bias != null) {
-	    float[] biasValue = valuesProvider.getValues(bias.getInputLayer(), bias).getElements();
-	    if (biasValue[0] == 0) {
-		Util.fillArray(biasValue, 1);
-	    }
+        if (bias != null) {
+            float[] biasValue = valuesProvider.getValues(bias.getInputLayer(), bias).getElements();
+            if (biasValue[0] == 0) {
+                Util.fillArray(biasValue, 1);
+            }
 
-	    float[] out = valuesProvider.getValues(bias.getOutputLayer(), bias).getElements();
-	    for (int i = 0; i < out.length; i++) {
-		GraphConnections gc = (GraphConnections) bias;
-		out[i] += gc.getConnectionGraph().getElements()[i / valuesProvider.getColumns()];
-	    }
-	}
+            float[] out = valuesProvider.getValues(bias.getOutputLayer(), bias).getElements();
+            for (int i = 0; i < out.length; i++) {
+                GraphConnections gc = (GraphConnections) bias;
+                out[i] += gc.getConnectionGraph().getElements()[i / valuesProvider.getColumns()];
+            }
+        }
     }
 
     @Override
     public void handleEvent(PropagationEvent event) {
-	if (preTransferFunctions != null) {
-	    for (MatrixFunction f : preTransferFunctions) {
-		if (f instanceof PropagationEventListener) {
-		    ((PropagationEventListener) f).handleEvent(event);
-		}
-	    }
-	}
+        if (preTransferFunctions != null) {
+            for (MatrixFunction f : preTransferFunctions) {
+                if (f instanceof PropagationEventListener) {
+                    ((PropagationEventListener) f).handleEvent(event);
+                }
+            }
+        }
 
-	if (activationFunctions != null) {
-	    for (MatrixFunction f : activationFunctions) {
-		if (f instanceof PropagationEventListener) {
-		    ((PropagationEventListener) f).handleEvent(event);
-		}
-	    }
-	}
+        if (activationFunctions != null) {
+            for (MatrixFunction f : activationFunctions) {
+                if (f instanceof PropagationEventListener) {
+                    ((PropagationEventListener) f).handleEvent(event);
+                }
+            }
+        }
     }
 
     protected ConnectionCalculator createInputFunction(SortedMap<GraphConnections, Integer> inputConnections, ValuesProvider valuesProvider, Layer targetLayer) {
-	return new AparapiWeightedSum(inputConnections, valuesProvider.getColumns(), targetLayer);
+        return new AparapiWeightedSum(inputConnections, valuesProvider.getColumns(), targetLayer);
     }
 
     public void addPreTransferFunction(MatrixFunction function) {
-	if (preTransferFunctions == null) {
-	    preTransferFunctions = new UniqueList<>();
-	}
+        if (preTransferFunctions == null) {
+            preTransferFunctions = new UniqueList<>();
+        }
 
-	preTransferFunctions.add(function);
+        preTransferFunctions.add(function);
     }
 
     public void removePreTransfer(MatrixFunction function) {
-	if (preTransferFunctions != null) {
-	    preTransferFunctions.remove(function);
-	}
+        if (preTransferFunctions != null) {
+            preTransferFunctions.remove(function);
+        }
     }
 
     public void addActivationFunction(MatrixFunction activationFunction) {
-	if (activationFunctions == null) {
-	    activationFunctions = new UniqueList<>();
-	}
+        if (activationFunctions == null) {
+            activationFunctions = new UniqueList<>();
+        }
 
-	activationFunctions.add(activationFunction);
+        activationFunctions.add(activationFunction);
     }
 
     public void removeActivationFunction(MatrixFunction activationFunction) {
-	if (activationFunctions != null) {
-	    activationFunctions.remove(activationFunction);
-	}
+        if (activationFunctions != null) {
+            activationFunctions.remove(activationFunction);
+        }
     }
 
     public ConnectionCalculator getInputFunction() {
-	return inputFunction;
+        return inputFunction;
     }
 
     public void setInputFunction(ConnectionCalculator inputFunction) {
-	this.inputFunction = inputFunction;
+        this.inputFunction = inputFunction;
     }
 }

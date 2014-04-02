@@ -18,35 +18,37 @@ public class DNNLayerTrainer extends Trainer<DNN<? extends NeuralNetwork>> {
     private static final long serialVersionUID = 1L;
 
     public DNNLayerTrainer(Properties properties) {
-	super(properties);
+        super(properties);
     }
 
-    /* (non-Javadoc)
-     * @see com.github.neuralnetworks.training.Trainer#train()
-     * Child netwokrs are trained in sequential order. Each network has it's own Trainer.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.github.neuralnetworks.training.Trainer#train() Child netwokrs
+     * are trained in sequential order. Each network has it's own Trainer.
      */
     @Override
     public void train() {
-	triggerEvent(new TrainingStartedEvent(this));
+        triggerEvent(new TrainingStartedEvent(this));
 
-	DNN<?> dnn = getNeuralNetwork();
-	DeepTrainerTrainingInputProvider inputProvider = new DeepTrainerTrainingInputProvider(getTrainingInputProvider(), dnn, null);
+        DNN<?> dnn = getNeuralNetwork();
+        DeepTrainerTrainingInputProvider inputProvider = new DeepTrainerTrainingInputProvider(getTrainingInputProvider(), dnn, null);
 
-	for (NeuralNetwork nn : dnn.getNeuralNetworks()) {
-	    inputProvider.reset();
-	    inputProvider.setCurrentNN(nn);
-	    OneStepTrainer<?> trainer = getTrainers().get(nn);
-	    trainer.setTrainingInputProvider(inputProvider);
-	    trainer.train();
+        for (NeuralNetwork nn : dnn.getNeuralNetworks()) {
+            inputProvider.reset();
+            inputProvider.setCurrentNN(nn);
+            OneStepTrainer<?> trainer = getTrainers().get(nn);
+            trainer.setTrainingInputProvider(inputProvider);
+            trainer.train();
 
-	    triggerEvent(new LayerTrainingFinished(this, trainer));
-	}
+            triggerEvent(new LayerTrainingFinished(this, trainer));
+        }
 
-	triggerEvent(new TrainingFinishedEvent(this));
+        triggerEvent(new TrainingFinishedEvent(this));
     }
 
     public Map<NeuralNetwork, OneStepTrainer<?>> getTrainers() {
-	return properties.getParameter(Constants.LAYER_TRAINERS);
+        return properties.getParameter(Constants.LAYER_TRAINERS);
     }
 
     /**
@@ -54,13 +56,13 @@ public class DNNLayerTrainer extends Trainer<DNN<? extends NeuralNetwork>> {
      */
     public static class LayerTrainingFinished extends TrainingEvent {
 
-	private static final long serialVersionUID = 2155527437110587968L;
+        private static final long serialVersionUID = 2155527437110587968L;
 
-	public OneStepTrainer<?> currentTrainer;
+        public OneStepTrainer<?> currentTrainer;
 
-	public LayerTrainingFinished(Trainer<?> source, OneStepTrainer<?> currentTrainer) {
-	    super(source);
-	    this.currentTrainer = currentTrainer;
-	}
+        public LayerTrainingFinished(Trainer<?> source, OneStepTrainer<?> currentTrainer) {
+            super(source);
+            this.currentTrainer = currentTrainer;
+        }
     }
 }

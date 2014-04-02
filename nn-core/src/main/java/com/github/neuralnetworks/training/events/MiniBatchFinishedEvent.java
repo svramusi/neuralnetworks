@@ -17,10 +17,10 @@ public class MiniBatchFinishedEvent extends TrainingEvent {
     private ValuesProvider results;
 
     public MiniBatchFinishedEvent(Trainer<?> source, TrainingInputData data, ValuesProvider results, Integer batchCount) {
-	super(source);
-	this.data = data;
-	this.results = results;
-	this.batchCount = batchCount;
+        super(source);
+        this.data = data;
+        this.results = results;
+        this.batchCount = batchCount;
     }
 
     public TrainingInputData getData() {

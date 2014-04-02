@@ -16,28 +16,28 @@ public abstract class TrainingInputProviderImpl implements TrainingInputProvider
 
     @Override
     public TrainingInputData getNextInput() {
-	TrainingInputData result = getNextUnmodifiedInput();
-	if (result != null && inputModifiers != null) {
-	    for (MatrixFunction m : inputModifiers) {
-		m.value(result.getInput());
-	    }
-	}
+        TrainingInputData result = getNextUnmodifiedInput();
+        if (result != null && inputModifiers != null) {
+            for (MatrixFunction m : inputModifiers) {
+                m.value(result.getInput());
+            }
+        }
 
-	return result;
+        return result;
     }
 
     public void addInputModifier(MatrixFunction modifier) {
-	if (inputModifiers == null) {
-	    inputModifiers = new ArrayList<>();
-	}
+        if (inputModifiers == null) {
+            inputModifiers = new ArrayList<>();
+        }
 
-	inputModifiers.add(modifier);
+        inputModifiers.add(modifier);
     }
 
     public void removeModifier(MatrixFunction modifier) {
-	if (inputModifiers != null) {
-	    inputModifiers.remove(modifier);
-	}
+        if (inputModifiers != null) {
+            inputModifiers.remove(modifier);
+        }
     }
 
     /**

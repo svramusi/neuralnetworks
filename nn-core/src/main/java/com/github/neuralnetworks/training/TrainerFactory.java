@@ -73,176 +73,189 @@ public class TrainerFactory {
      * @param l1weightDecay
      * @return
      */
-    public static BackPropagationTrainer<?> backPropagation(NeuralNetworkImpl nn, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay) {
-	BackPropagationTrainer<?> t = new BackPropagationTrainer<NeuralNetwork>(backpropProperties(nn, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay, l2weightDecay));
+    public static BackPropagationTrainer<?> backPropagation(NeuralNetworkImpl nn, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error,
+            NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay) {
+        BackPropagationTrainer<?> t = new BackPropagationTrainer<NeuralNetwork>(backpropProperties(nn, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay,
+                l2weightDecay));
 
-	BackPropagationLayerCalculatorImpl bplc = bplc(nn, t.getProperties());
-	t.getProperties().setParameter(Constants.BACKPROPAGATION, bplc);
+        BackPropagationLayerCalculatorImpl bplc = bplc(nn, t.getProperties());
+        t.getProperties().setParameter(Constants.BACKPROPAGATION, bplc);
 
-	return t;
+        return t;
     }
 
     private static BackPropagationLayerCalculatorImpl bplc(NeuralNetworkImpl nn, Properties p) {
-	BackPropagationLayerCalculatorImpl blc = new BackPropagationLayerCalculatorImpl();
-	LayerCalculatorImpl lc = (LayerCalculatorImpl) nn.getLayerCalculator();
+        BackPropagationLayerCalculatorImpl blc = new BackPropagationLayerCalculatorImpl();
+        LayerCalculatorImpl lc = (LayerCalculatorImpl) nn.getLayerCalculator();
 
-	List<ConnectionCandidate> connections = new BreadthFirstOrderStrategy(nn, nn.getOutputLayer()).order();
+        List<ConnectionCandidate> connections = new BreadthFirstOrderStrategy(nn, nn.getOutputLayer()).order();
 
-	if (connections.size() > 0) {
-	    Layer current = null;
-	    List<Connections> chunk = new ArrayList<>();
-	    Set<Layer> convCalculatedLayers = new HashSet<>(); // tracks
-							       // convolutional
-							       // layers
-							       // (because their
-							       // calculations
-							       // are
-							       // interlinked)
-	    convCalculatedLayers.add(nn.getOutputLayer());
+        if (connections.size() > 0) {
+            Layer current = null;
+            List<Connections> chunk = new ArrayList<>();
+            Set<Layer> convCalculatedLayers = new HashSet<>(); // tracks
+            // convolutional
+            // layers
+            // (because their
+            // calculations
+            // are
+            // interlinked)
+            convCalculatedLayers.add(nn.getOutputLayer());
 
-	    for (int i = 0; i < connections.size(); i++) {
-		ConnectionCandidate c = connections.get(i);
-		chunk.add(c.connection);
+            for (int i = 0; i < connections.size(); i++) {
+                ConnectionCandidate c = connections.get(i);
+                chunk.add(c.connection);
 
-		if (i == connections.size() - 1 || connections.get(i + 1).target != c.target) {
-		    current = c.target;
+                if (i == connections.size() - 1 || connections.get(i + 1).target != c.target) {
+                    current = c.target;
 
-		    ConnectionCalculator result = null;
-		    ConnectionCalculator ffcc = null;
-		    if (Util.isBias(current)) {
-			ffcc = lc.getConnectionCalculator(current.getConnections().get(0).getOutputLayer());
-		    } else if (Util.isConvolutional(current) || Util.isSubsampling(current)) {
-			if (chunk.size() != 1) {
-			    throw new IllegalArgumentException("Convolutional layer with more than one connection");
-			}
+                    ConnectionCalculator result = null;
+                    ConnectionCalculator ffcc = null;
+                    if (Util.isBias(current)) {
+                        ffcc = lc.getConnectionCalculator(current.getConnections().get(0).getOutputLayer());
+                    } else if (Util.isConvolutional(current) || Util.isSubsampling(current)) {
+                        if (chunk.size() != 1) {
+                            throw new IllegalArgumentException("Convolutional layer with more than one connection");
+                        }
 
-			ffcc = lc.getConnectionCalculator(Util.getOppositeLayer(chunk.iterator().next(), current));
-		    } else {
-			ffcc = lc.getConnectionCalculator(current);
-		    }
+                        ffcc = lc.getConnectionCalculator(Util.getOppositeLayer(chunk.iterator().next(), current));
+                    } else {
+                        ffcc = lc.getConnectionCalculator(current);
+                    }
 
-		    if (ffcc instanceof AparapiSigmoid) {
-			result = new BackPropagationSigmoid(p);
-		    } else if (ffcc instanceof AparapiTanh) {
-			result = new BackPropagationTanh(p);
-		    } else if (ffcc instanceof AparapiSoftReLU) {
-			result = new BackPropagationSoftReLU(p);
-		    } else if (ffcc instanceof AparapiReLU) {
-			result = new BackPropagationReLU(p);
-		    } else if (ffcc instanceof AparapiMaxPooling2D || ffcc instanceof AparapiStochasticPooling2D) {
-			result = new BackpropagationMaxPooling2D();
-		    } else if (ffcc instanceof AparapiAveragePooling2D) {
-			result = new BackpropagationAveragePooling2D();
-		    } else if (ffcc instanceof ConnectionCalculatorConv) {
-			Layer opposite = Util.getOppositeLayer(chunk.iterator().next(), current);
-			if (!convCalculatedLayers.contains(opposite)) {
-			    convCalculatedLayers.add(opposite);
+                    if (ffcc instanceof AparapiSigmoid) {
+                        result = new BackPropagationSigmoid(p);
+                    } else if (ffcc instanceof AparapiTanh) {
+                        result = new BackPropagationTanh(p);
+                    } else if (ffcc instanceof AparapiSoftReLU) {
+                        result = new BackPropagationSoftReLU(p);
+                    } else if (ffcc instanceof AparapiReLU) {
+                        result = new BackPropagationReLU(p);
+                    } else if (ffcc instanceof AparapiMaxPooling2D || ffcc instanceof AparapiStochasticPooling2D) {
+                        result = new BackpropagationMaxPooling2D();
+                    } else if (ffcc instanceof AparapiAveragePooling2D) {
+                        result = new BackpropagationAveragePooling2D();
+                    } else if (ffcc instanceof ConnectionCalculatorConv) {
+                        Layer opposite = Util.getOppositeLayer(chunk.iterator().next(), current);
+                        if (!convCalculatedLayers.contains(opposite)) {
+                            convCalculatedLayers.add(opposite);
 
-			    if (ffcc instanceof AparapiConv2DSigmoid) {
-				result = new BackPropagationConv2DSigmoid(p);
-			    } else if (ffcc instanceof AparapiConv2DTanh) {
-				result = new BackPropagationConv2DTanh(p);
-			    } else if (ffcc instanceof AparapiConv2DSoftReLU) {
-				result = new BackPropagationConv2DSoftReLU(p);
-			    } else if (ffcc instanceof AparapiConv2DReLU) {
-				result = new BackPropagationConv2DReLU(p);
-			    }
-			} else {
-			    result = new BackPropagationConv2D(p);
-			}
-		    }
+                            if (ffcc instanceof AparapiConv2DSigmoid) {
+                                result = new BackPropagationConv2DSigmoid(p);
+                            } else if (ffcc instanceof AparapiConv2DTanh) {
+                                result = new BackPropagationConv2DTanh(p);
+                            } else if (ffcc instanceof AparapiConv2DSoftReLU) {
+                                result = new BackPropagationConv2DSoftReLU(p);
+                            } else if (ffcc instanceof AparapiConv2DReLU) {
+                                result = new BackPropagationConv2DReLU(p);
+                            }
+                        } else {
+                            result = new BackPropagationConv2D(p);
+                        }
+                    }
 
-		    if (result != null) {
-			blc.addConnectionCalculator(current, result);
-		    }
+                    if (result != null) {
+                        blc.addConnectionCalculator(current, result);
+                    }
 
-		    chunk.clear();
-		}
-	    }
-	}
+                    chunk.clear();
+                }
+            }
+        }
 
-	return blc;
+        return blc;
     }
 
-    public static BackPropagationAutoencoder backPropagationAutoencoder(NeuralNetworkImpl nn, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay, float inputCorruptionRate) {
-	BackPropagationAutoencoder t = new BackPropagationAutoencoder(backpropProperties(nn, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay, l2weightDecay));
+    public static BackPropagationAutoencoder backPropagationAutoencoder(NeuralNetworkImpl nn, TrainingInputProvider trainingSet, TrainingInputProvider testingSet,
+            OutputError error, NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay, float inputCorruptionRate) {
+        BackPropagationAutoencoder t = new BackPropagationAutoencoder(backpropProperties(nn, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay,
+                l2weightDecay));
 
-	BackPropagationLayerCalculatorImpl bplc = bplc(nn, t.getProperties());
-	t.getProperties().setParameter(Constants.BACKPROPAGATION, bplc);
+        BackPropagationLayerCalculatorImpl bplc = bplc(nn, t.getProperties());
+        t.getProperties().setParameter(Constants.BACKPROPAGATION, bplc);
 
-	return t;
+        return t;
     }
 
-    protected static Properties backpropProperties(NeuralNetwork nn, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay) {
-	Properties p = new Properties();
-	p.setParameter(Constants.NEURAL_NETWORK, nn);
-	p.setParameter(Constants.TRAINING_INPUT_PROVIDER, trainingSet);
-	p.setParameter(Constants.TESTING_INPUT_PROVIDER, testingSet);
-	p.setParameter(Constants.LEARNING_RATE, learningRate);
-	p.setParameter(Constants.MOMENTUM, momentum);
-	p.setParameter(Constants.L1_WEIGHT_DECAY, l1weightDecay);
-	p.setParameter(Constants.L2_WEIGHT_DECAY, l2weightDecay);
-	p.setParameter(Constants.OUTPUT_ERROR_DERIVATIVE, new MSEDerivative());
-	p.setParameter(Constants.OUTPUT_ERROR, error);
-	p.setParameter(Constants.RANDOM_INITIALIZER, rand);
+    protected static Properties backpropProperties(NeuralNetwork nn, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error,
+            NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay) {
+        Properties p = new Properties();
+        p.setParameter(Constants.NEURAL_NETWORK, nn);
+        p.setParameter(Constants.TRAINING_INPUT_PROVIDER, trainingSet);
+        p.setParameter(Constants.TESTING_INPUT_PROVIDER, testingSet);
+        p.setParameter(Constants.LEARNING_RATE, learningRate);
+        p.setParameter(Constants.MOMENTUM, momentum);
+        p.setParameter(Constants.L1_WEIGHT_DECAY, l1weightDecay);
+        p.setParameter(Constants.L2_WEIGHT_DECAY, l2weightDecay);
+        p.setParameter(Constants.OUTPUT_ERROR_DERIVATIVE, new MSEDerivative());
+        p.setParameter(Constants.OUTPUT_ERROR, error);
+        p.setParameter(Constants.RANDOM_INITIALIZER, rand);
 
-	return p;
+        return p;
     }
 
-    public static AparapiCDTrainer cdSoftReLUTrainer(RBM rbm, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int gibbsSampling, boolean isPersistentCD) {
-	rbm.setLayerCalculator(NNFactory.rbmSoftReluSoftRelu(rbm));
+    public static AparapiCDTrainer cdSoftReLUTrainer(RBM rbm, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand,
+            float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int gibbsSampling, boolean isPersistentCD) {
+        rbm.setLayerCalculator(NNFactory.rbmSoftReluSoftRelu(rbm));
 
-	RBMLayerCalculator lc = NNFactory.rbmSigmoidSigmoid(rbm);
-	ConnectionCalculatorFullyConnected cc = (ConnectionCalculatorFullyConnected) lc.getConnectionCalculator(rbm.getInputLayer());
-	cc.addPreTransferFunction(new BernoulliDistribution());
+        RBMLayerCalculator lc = NNFactory.rbmSigmoidSigmoid(rbm);
+        ConnectionCalculatorFullyConnected cc = (ConnectionCalculatorFullyConnected) lc.getConnectionCalculator(rbm.getInputLayer());
+        cc.addPreTransferFunction(new BernoulliDistribution());
 
-	return new AparapiCDTrainer(rbmProperties(rbm, lc, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay, l2weightDecay, gibbsSampling, isPersistentCD));
+        return new AparapiCDTrainer(rbmProperties(rbm, lc, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay, l2weightDecay, gibbsSampling,
+                isPersistentCD));
     }
 
-    public static AparapiCDTrainer cdSigmoidTrainer(RBM rbm, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int gibbsSampling, boolean isPersistentCD) {
-	rbm.setLayerCalculator(NNFactory.rbmSigmoidSigmoid(rbm));
+    public static AparapiCDTrainer cdSigmoidTrainer(RBM rbm, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand,
+            float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int gibbsSampling, boolean isPersistentCD) {
+        rbm.setLayerCalculator(NNFactory.rbmSigmoidSigmoid(rbm));
 
-	RBMLayerCalculator lc = NNFactory.rbmSigmoidSigmoid(rbm);
-	ConnectionCalculatorFullyConnected cc = (ConnectionCalculatorFullyConnected) lc.getConnectionCalculator(rbm.getInputLayer());
-	cc.addPreTransferFunction(new BernoulliDistribution());
+        RBMLayerCalculator lc = NNFactory.rbmSigmoidSigmoid(rbm);
+        ConnectionCalculatorFullyConnected cc = (ConnectionCalculatorFullyConnected) lc.getConnectionCalculator(rbm.getInputLayer());
+        cc.addPreTransferFunction(new BernoulliDistribution());
 
-	return new AparapiCDTrainer(rbmProperties(rbm, lc, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay, l2weightDecay, gibbsSampling, isPersistentCD));
+        return new AparapiCDTrainer(rbmProperties(rbm, lc, trainingSet, testingSet, error, rand, learningRate, momentum, l1weightDecay, l2weightDecay, gibbsSampling,
+                isPersistentCD));
     }
 
-    protected static Properties rbmProperties(RBM rbm, RBMLayerCalculator lc, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error, NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int gibbsSampling, boolean resetRBM) {
-	Properties p = new Properties();
-	p.setParameter(Constants.NEURAL_NETWORK, rbm);
-	p.setParameter(Constants.TRAINING_INPUT_PROVIDER, trainingSet);
-	p.setParameter(Constants.TESTING_INPUT_PROVIDER, testingSet);
-	p.setParameter(Constants.LEARNING_RATE, learningRate);
-	p.setParameter(Constants.MOMENTUM, momentum);
-	p.setParameter(Constants.L1_WEIGHT_DECAY, l1weightDecay);
-	p.setParameter(Constants.L2_WEIGHT_DECAY, l2weightDecay);
-	p.setParameter(Constants.GIBBS_SAMPLING_COUNT, gibbsSampling);
-	p.setParameter(Constants.OUTPUT_ERROR, error);
-	p.setParameter(Constants.RANDOM_INITIALIZER, rand);
-	p.setParameter(Constants.RESET_RBM, resetRBM);
-	p.setParameter(Constants.LAYER_CALCULATOR, lc);
+    protected static Properties rbmProperties(RBM rbm, RBMLayerCalculator lc, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error,
+            NNRandomInitializer rand, float learningRate, float momentum, float l1weightDecay, float l2weightDecay, int gibbsSampling, boolean resetRBM) {
+        Properties p = new Properties();
+        p.setParameter(Constants.NEURAL_NETWORK, rbm);
+        p.setParameter(Constants.TRAINING_INPUT_PROVIDER, trainingSet);
+        p.setParameter(Constants.TESTING_INPUT_PROVIDER, testingSet);
+        p.setParameter(Constants.LEARNING_RATE, learningRate);
+        p.setParameter(Constants.MOMENTUM, momentum);
+        p.setParameter(Constants.L1_WEIGHT_DECAY, l1weightDecay);
+        p.setParameter(Constants.L2_WEIGHT_DECAY, l2weightDecay);
+        p.setParameter(Constants.GIBBS_SAMPLING_COUNT, gibbsSampling);
+        p.setParameter(Constants.OUTPUT_ERROR, error);
+        p.setParameter(Constants.RANDOM_INITIALIZER, rand);
+        p.setParameter(Constants.RESET_RBM, resetRBM);
+        p.setParameter(Constants.LAYER_CALCULATOR, lc);
 
-	return p;
+        return p;
     }
 
-    public static DNNLayerTrainer dnnLayerTrainer(DNN<?> dnn, Map<NeuralNetwork, OneStepTrainer<?>> layerTrainers, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error) {
-	return new DNNLayerTrainer(layerTrainerProperties(dnn, layerTrainers, trainingSet, testingSet, error));
+    public static DNNLayerTrainer dnnLayerTrainer(DNN<?> dnn, Map<NeuralNetwork, OneStepTrainer<?>> layerTrainers, TrainingInputProvider trainingSet,
+            TrainingInputProvider testingSet, OutputError error) {
+        return new DNNLayerTrainer(layerTrainerProperties(dnn, layerTrainers, trainingSet, testingSet, error));
     }
 
-    public static DBNTrainer dbnTrainer(DNN<?> dnn, Map<NeuralNetwork, OneStepTrainer<?>> layerTrainers, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error) {
-	return new DBNTrainer(layerTrainerProperties(dnn, layerTrainers, trainingSet, testingSet, error));
+    public static DBNTrainer dbnTrainer(DNN<?> dnn, Map<NeuralNetwork, OneStepTrainer<?>> layerTrainers, TrainingInputProvider trainingSet, TrainingInputProvider testingSet,
+            OutputError error) {
+        return new DBNTrainer(layerTrainerProperties(dnn, layerTrainers, trainingSet, testingSet, error));
     }
 
-    protected static Properties layerTrainerProperties(DNN<?> dnn, Map<NeuralNetwork, OneStepTrainer<?>> layerTrainers, TrainingInputProvider trainingSet, TrainingInputProvider testingSet, OutputError error) {
-	Properties p = new Properties();
-	p.setParameter(Constants.NEURAL_NETWORK, dnn);
-	p.setParameter(Constants.TRAINING_INPUT_PROVIDER, trainingSet);
-	p.setParameter(Constants.TESTING_INPUT_PROVIDER, testingSet);
-	p.setParameter(Constants.OUTPUT_ERROR, error);
-	p.setParameter(Constants.LAYER_TRAINERS, layerTrainers);
+    protected static Properties layerTrainerProperties(DNN<?> dnn, Map<NeuralNetwork, OneStepTrainer<?>> layerTrainers, TrainingInputProvider trainingSet,
+            TrainingInputProvider testingSet, OutputError error) {
+        Properties p = new Properties();
+        p.setParameter(Constants.NEURAL_NETWORK, dnn);
+        p.setParameter(Constants.TRAINING_INPUT_PROVIDER, trainingSet);
+        p.setParameter(Constants.TESTING_INPUT_PROVIDER, testingSet);
+        p.setParameter(Constants.OUTPUT_ERROR, error);
+        p.setParameter(Constants.LAYER_TRAINERS, layerTrainers);
 
-	return p;
+        return p;
     }
 }

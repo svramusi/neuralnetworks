@@ -11,7 +11,8 @@ import com.github.neuralnetworks.calculation.LayerOrderStrategy.ConnectionCandid
 import com.github.neuralnetworks.util.Util;
 
 /**
- * Random Initializer for neural networks weights - all the connections between neurons are traversed and initialized
+ * Random Initializer for neural networks weights - all the connections between
+ * neurons are traversed and initialized
  */
 public class NNRandomInitializer implements Serializable {
 
@@ -32,80 +33,80 @@ public class NNRandomInitializer implements Serializable {
     protected Float biasDefaultValue;
 
     public NNRandomInitializer() {
-	super();
+        super();
     }
 
     public NNRandomInitializer(RandomInitializer randomInitializer) {
-	super();
-	this.randomInitializer = randomInitializer;
+        super();
+        this.randomInitializer = randomInitializer;
     }
 
     public NNRandomInitializer(RandomInitializer randomInitializer, RandomInitializer biasRandomInitializer) {
-	super();
-	this.randomInitializer = randomInitializer;
-	this.biasRandomInitializer = biasRandomInitializer;
+        super();
+        this.randomInitializer = randomInitializer;
+        this.biasRandomInitializer = biasRandomInitializer;
     }
 
     public NNRandomInitializer(RandomInitializer randomInitializer, Float biasDefaultValue) {
-	super();
-	this.randomInitializer = randomInitializer;
-	this.biasDefaultValue = biasDefaultValue;
+        super();
+        this.randomInitializer = randomInitializer;
+        this.biasDefaultValue = biasDefaultValue;
     }
 
     public void initialize(NeuralNetwork nn) {
-	List<ConnectionCandidate> ccs = new BreadthFirstOrderStrategy(nn, nn.getInputLayer()).order();
-	for (ConnectionCandidate cc : ccs) {
-	    if (cc.connection instanceof GraphConnections) {
-		GraphConnections fc = (GraphConnections) cc.connection;
-		if (Util.isBias(fc.getInputLayer())) {
-		    if (biasDefaultValue != null) {
-			Util.fillArray(fc.getConnectionGraph().getElements(), biasDefaultValue);
-		    } else if (biasRandomInitializer != null) {
-			biasRandomInitializer.initialize(fc.getConnectionGraph().getElements());
-		    } else {
-			randomInitializer.initialize(fc.getConnectionGraph().getElements());
-		    }
-		} else {
-		    randomInitializer.initialize(fc.getConnectionGraph().getElements());
-		}
-	    } else if (cc.connection instanceof Conv2DConnection) {
-		Conv2DConnection c = (Conv2DConnection) cc.connection;
-		if (Util.isBias(c.getInputLayer())) {
-		    if (biasDefaultValue != null) {
-			Util.fillArray(c.getWeights(), biasDefaultValue);
-		    } else if (biasRandomInitializer != null) {
-			biasRandomInitializer.initialize(c.getWeights());
-		    } else {
-			randomInitializer.initialize(c.getWeights());
-		    }
-		} else {
-		    randomInitializer.initialize(c.getWeights());
-		}
-	    }
-	}
+        List<ConnectionCandidate> ccs = new BreadthFirstOrderStrategy(nn, nn.getInputLayer()).order();
+        for (ConnectionCandidate cc : ccs) {
+            if (cc.connection instanceof GraphConnections) {
+                GraphConnections fc = (GraphConnections) cc.connection;
+                if (Util.isBias(fc.getInputLayer())) {
+                    if (biasDefaultValue != null) {
+                        Util.fillArray(fc.getConnectionGraph().getElements(), biasDefaultValue);
+                    } else if (biasRandomInitializer != null) {
+                        biasRandomInitializer.initialize(fc.getConnectionGraph().getElements());
+                    } else {
+                        randomInitializer.initialize(fc.getConnectionGraph().getElements());
+                    }
+                } else {
+                    randomInitializer.initialize(fc.getConnectionGraph().getElements());
+                }
+            } else if (cc.connection instanceof Conv2DConnection) {
+                Conv2DConnection c = (Conv2DConnection) cc.connection;
+                if (Util.isBias(c.getInputLayer())) {
+                    if (biasDefaultValue != null) {
+                        Util.fillArray(c.getWeights(), biasDefaultValue);
+                    } else if (biasRandomInitializer != null) {
+                        biasRandomInitializer.initialize(c.getWeights());
+                    } else {
+                        randomInitializer.initialize(c.getWeights());
+                    }
+                } else {
+                    randomInitializer.initialize(c.getWeights());
+                }
+            }
+        }
     }
 
     public RandomInitializer getRandomInitializer() {
-	return randomInitializer;
+        return randomInitializer;
     }
 
     public void setRandomInitializer(RandomInitializer randomInitializer) {
-	this.randomInitializer = randomInitializer;
+        this.randomInitializer = randomInitializer;
     }
 
     public RandomInitializer getBiasRandomInitializer() {
-	return biasRandomInitializer;
+        return biasRandomInitializer;
     }
 
     public void setBiasRandomInitializer(RandomInitializer biasRandomInitializer) {
-	this.biasRandomInitializer = biasRandomInitializer;
+        this.biasRandomInitializer = biasRandomInitializer;
     }
 
     public Float getBiasDefaultValue() {
-	return biasDefaultValue;
+        return biasDefaultValue;
     }
 
     public void setBiasDefaultValue(Float biasDefaultValue) {
-	this.biasDefaultValue = biasDefaultValue;
+        this.biasDefaultValue = biasDefaultValue;
     }
 }

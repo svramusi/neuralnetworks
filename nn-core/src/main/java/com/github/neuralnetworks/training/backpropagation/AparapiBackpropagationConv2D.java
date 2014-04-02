@@ -42,74 +42,75 @@ public class AparapiBackpropagationConv2D extends AparapiConv2D implements BackP
     protected ValuesProvider activations;
 
     public AparapiBackpropagationConv2D(Conv2DConnection c, int miniBatchSize) {
-	super(c, miniBatchSize);
-	this.weightUpdates = new float[c.getWeights().length];
-	this.weightUpdatesMomentum = new float[c.getWeights().length];
+        super(c, miniBatchSize);
+        this.weightUpdates = new float[c.getWeights().length];
+        this.weightUpdatesMomentum = new float[c.getWeights().length];
     }
 
     @Override
     public void calculate(List<Connections> connections, ValuesProvider valuesProvider, Layer targetLayer) {
-	Conv2DConnection c = null;
+        Conv2DConnection c = null;
 
-	for (Connections con : connections) {
-	    if (con instanceof Conv2DConnection) {
-		c = (Conv2DConnection) con;
-	    }
-	}
+        for (Connections con : connections) {
+            if (con instanceof Conv2DConnection) {
+                c = (Conv2DConnection) con;
+            }
+        }
 
-	if (c != null) {
-	    // currently works only as a feedforward (including bp)
-	    if (targetLayer == c.getOutputLayer()) {
-		super.calculate(c, valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c), valuesProvider.getValues(targetLayer, c));
-	    } else {
-		super.calculate(c, valuesProvider.getValues(targetLayer, c), valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c));
-	    }
+        if (c != null) {
+            // currently works only as a feedforward (including bp)
+            if (targetLayer == c.getOutputLayer()) {
+                super.calculate(c, valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c), valuesProvider.getValues(targetLayer, c));
+            } else {
+                super.calculate(c, valuesProvider.getValues(targetLayer, c), valuesProvider.getValues(Util.getOppositeLayer(c, targetLayer), c));
+            }
 
-	    updateWeights();
-	}
+            updateWeights();
+        }
     }
 
     @Override
     protected void init(Conv2DConnection c, Matrix input, Matrix output) {
-	super.init(c, input, output);
+        super.init(c, input, output);
 
-	Util.fillArray(weightUpdates, 0);
+        Util.fillArray(weightUpdates, 0);
 
-	if (ffActivation != activations.getValues(c.getInputLayer(), c).getElements()) {
-	    ffActivation = activations.getValues(c.getInputLayer(), c).getElements();
-	}
+        if (ffActivation != activations.getValues(c.getInputLayer(), c).getElements()) {
+            ffActivation = activations.getValues(c.getInputLayer(), c).getElements();
+        }
     }
 
     @Override
     protected void conv(int weightsStartId, int inputStartId) {
-	int id = getGlobalId();
+        int id = getGlobalId();
 
-	float activationDerivative = 0;
-	int inputId = 0;
+        float activationDerivative = 0;
+        int inputId = 0;
 
-	for (int p = 0; p < miniBatchSize; p++) {
-	    activationDerivative = activationFunctionDerivative(output[id * miniBatchSize + p]);
-	    output[id * miniBatchSize + p] = activationDerivative;
+        for (int p = 0; p < miniBatchSize; p++) {
+            activationDerivative = activationFunctionDerivative(output[id * miniBatchSize + p]);
+            output[id * miniBatchSize + p] = activationDerivative;
 
-	    for (int i = 0; i < featureMapWeights; i++) {
-		inputId = (inputStartId + featureMapOffsets[i]) * miniBatchSize + p;
-		weightUpdates[weightsStartId + i] += activationDerivative * ffActivation[inputId];
-		input[inputId] += activationDerivative * weights[weightsStartId + i];
-	    }
-	}
+            for (int i = 0; i < featureMapWeights; i++) {
+                inputId = (inputStartId + featureMapOffsets[i]) * miniBatchSize + p;
+                weightUpdates[weightsStartId + i] += activationDerivative * ffActivation[inputId];
+                input[inputId] += activationDerivative * weights[weightsStartId + i];
+            }
+        }
     }
 
     /**
      * Weight updates after the backpropagation
      */
     protected void updateWeights() {
-	float weightUpdate = 0;
-	for (int i = 0; i < weights.length; i++) {
-	    weightUpdate = learningRate * weightUpdates[i] + momentum * weightUpdatesMomentum[i] - l1weightDecay * Math.abs(weights[i]) - l2weightDecay * weights[i] * weights[i] / 2;
-	    weights[i] += weightUpdate;
-	    weightUpdatesMomentum[i] = weightUpdates[i];
-	    weightUpdates[i] = weightUpdate;
-	}
+        float weightUpdate = 0;
+        for (int i = 0; i < weights.length; i++) {
+            weightUpdate = learningRate * weightUpdates[i] + momentum * weightUpdatesMomentum[i] - l1weightDecay * Math.abs(weights[i]) - l2weightDecay * weights[i] * weights[i]
+                    / 2;
+            weights[i] += weightUpdate;
+            weightUpdatesMomentum[i] = weightUpdates[i];
+            weightUpdates[i] = weightUpdate;
+        }
     }
 
     /**
@@ -119,7 +120,7 @@ public class AparapiBackpropagationConv2D extends AparapiConv2D implements BackP
      * @return
      */
     protected float activationFunctionDerivative(float value) {
-	return value;
+        return value;
     }
 
     @Override
@@ -149,17 +150,17 @@ public class AparapiBackpropagationConv2D extends AparapiConv2D implements BackP
 
     @Override
     public void setL1weightDecay(float weightDecay) {
-	this.l1weightDecay = weightDecay;
+        this.l1weightDecay = weightDecay;
     }
-    
+
     @Override
     public float getL2weightDecay() {
-	return l2weightDecay;
+        return l2weightDecay;
     }
-    
+
     @Override
     public void setL2weightDecay(float weightDecay) {
-	this.l2weightDecay = weightDecay;
+        this.l2weightDecay = weightDecay;
     }
 
     @Override

@@ -17,26 +17,26 @@ public class SoftmaxFunction extends Kernel implements MatrixFunction {
 
     @Override
     public void value(Matrix inputOutput) {
-	this.values = inputOutput.getElements();
-	this.rows = inputOutput.getRows();
-	this.columns = inputOutput.getColumns();
+        this.values = inputOutput.getElements();
+        this.rows = inputOutput.getRows();
+        this.columns = inputOutput.getColumns();
 
-	Environment.getInstance().getExecutionStrategy().execute(this, columns);
+        Environment.getInstance().getExecutionStrategy().execute(this, columns);
     }
 
     @Override
     public void run() {
-	float sum = 0;
-	int r = rows;
-	int c = columns;
-	int id = getGlobalId();
+        float sum = 0;
+        int r = rows;
+        int c = columns;
+        int id = getGlobalId();
 
-	for (int i = 0; i < r; i++) {
-	    sum += values[i * c + id];
-	}
+        for (int i = 0; i < r; i++) {
+            sum += values[i * c + id];
+        }
 
-	for (int i = 0; i < r; i++) {
-	    values[i * c + id] /= sum;
-	}
+        for (int i = 0; i < r; i++) {
+            values[i * c + id] /= sum;
+        }
     }
 }

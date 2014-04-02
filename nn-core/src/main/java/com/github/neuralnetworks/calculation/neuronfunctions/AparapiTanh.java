@@ -16,25 +16,25 @@ public class AparapiTanh extends ConnectionCalculatorFullyConnected {
 
     @Override
     protected ConnectionCalculator createInputFunction(SortedMap<GraphConnections, Integer> inputConnections, ValuesProvider valuesProvider, Layer targetLayer) {
-	return new AparapiTanhFunction(inputConnections, valuesProvider.getColumns(), targetLayer);
+        return new AparapiTanhFunction(inputConnections, valuesProvider.getColumns(), targetLayer);
     }
 
     public static class AparapiTanhFunction extends AparapiWeightedSum {
 
-	private static final long serialVersionUID = -3409078521599849086L;
+        private static final long serialVersionUID = -3409078521599849086L;
 
-	public AparapiTanhFunction(SortedMap<GraphConnections, Integer> inputConnections, int miniBatchSize, Layer targetLayer) {
-	    super(inputConnections, miniBatchSize, targetLayer);
-	}
+        public AparapiTanhFunction(SortedMap<GraphConnections, Integer> inputConnections, int miniBatchSize, Layer targetLayer) {
+            super(inputConnections, miniBatchSize, targetLayer);
+        }
 
-	@Override
-	protected void after() {
-	    int mb = miniBatchSize;
-	    int outputId = getGlobalId() * mb;
-	    
-	    for (int i = 0; i < mb; i++) {
-		output[outputId + i] = tan(output[outputId + i]);
-	    }
-	}
+        @Override
+        protected void after() {
+            int mb = miniBatchSize;
+            int outputId = getGlobalId() * mb;
+
+            for (int i = 0; i < mb; i++) {
+                output[outputId + i] = tan(output[outputId + i]);
+            }
+        }
     }
 }

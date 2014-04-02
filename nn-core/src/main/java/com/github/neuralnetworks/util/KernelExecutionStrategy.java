@@ -13,51 +13,51 @@ public interface KernelExecutionStrategy {
 
     public static class DefaultKernelExecution implements KernelExecutionStrategy {
 
-	@Override
-	public void execute(Kernel kernel, int range) {
-	    if (range <= Runtime.getRuntime().availableProcessors() * 600) {
-		kernel.setExecutionMode(EXECUTION_MODE.CPU);
-		kernel.execute(range);
-	    } else {
-		kernel.setExecutionMode(EXECUTION_MODE.GPU);
-		kernel.execute(range);
-	    }
-	}
+        @Override
+        public void execute(Kernel kernel, int range) {
+            if (range <= Runtime.getRuntime().availableProcessors() * 600) {
+                kernel.setExecutionMode(EXECUTION_MODE.CPU);
+                kernel.execute(range);
+            } else {
+                kernel.setExecutionMode(EXECUTION_MODE.GPU);
+                kernel.execute(range);
+            }
+        }
     }
 
     public static class JTPKernelExecution implements KernelExecutionStrategy {
 
-	@Override
-	public void execute(Kernel kernel, int range) {
-	    kernel.setExecutionMode(EXECUTION_MODE.JTP);
-	    kernel.execute(range);
-	}
+        @Override
+        public void execute(Kernel kernel, int range) {
+            kernel.setExecutionMode(EXECUTION_MODE.JTP);
+            kernel.execute(range);
+        }
     }
 
     public static class GPUKernelExecution implements KernelExecutionStrategy {
 
-	@Override
-	public void execute(Kernel kernel, int range) {
-	    kernel.setExecutionMode(EXECUTION_MODE.GPU);
-	    kernel.execute(range);
-	}
+        @Override
+        public void execute(Kernel kernel, int range) {
+            kernel.setExecutionMode(EXECUTION_MODE.GPU);
+            kernel.execute(range);
+        }
     }
 
     public static class SeqKernelExecution implements KernelExecutionStrategy {
 
-	@Override
-	public void execute(Kernel kernel, int range) {
-	    kernel.setExecutionMode(EXECUTION_MODE.SEQ);
-	    kernel.execute(Range.create(range, 1));
-	}
+        @Override
+        public void execute(Kernel kernel, int range) {
+            kernel.setExecutionMode(EXECUTION_MODE.SEQ);
+            kernel.execute(Range.create(range, 1));
+        }
     }
 
     public static class CPUKernelExecution implements KernelExecutionStrategy {
 
-	@Override
-	public void execute(Kernel kernel, int range) {
-	    kernel.setExecutionMode(EXECUTION_MODE.CPU);
-	    kernel.execute(range);
-	}
+        @Override
+        public void execute(Kernel kernel, int range) {
+            kernel.setExecutionMode(EXECUTION_MODE.CPU);
+            kernel.execute(range);
+        }
     }
 }

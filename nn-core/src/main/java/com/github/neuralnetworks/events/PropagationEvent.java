@@ -20,22 +20,22 @@ public class PropagationEvent extends EventObject {
     private NeuralNetwork neuralNetwork;
 
     public PropagationEvent(Layer layer, List<Connections> connections, NeuralNetwork nn, ValuesProvider results) {
-	super(layer);
-	this.connections = connections;
-	this.neuralNetwork = nn;
-	this.results = results;
+        super(layer);
+        this.connections = connections;
+        this.neuralNetwork = nn;
+        this.results = results;
     }
 
     public ValuesProvider getResults() {
-	return results;
+        return results;
     }
-    
+
     public void setResults(ValuesProvider results) {
-	this.results = results;
+        this.results = results;
     }
 
     public Layer getLayer() {
-	return (Layer) getSource();
+        return (Layer) getSource();
     }
 
     public List<Connections> getConnections() {

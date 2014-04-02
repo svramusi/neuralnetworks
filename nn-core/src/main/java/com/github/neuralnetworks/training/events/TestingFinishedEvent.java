@@ -8,6 +8,6 @@ public class TestingFinishedEvent extends TrainingEvent {
     private static final long serialVersionUID = -5239379347414855784L;
 
     public TestingFinishedEvent(Trainer<?> source) {
-	super(source);
+        super(source);
     }
 }

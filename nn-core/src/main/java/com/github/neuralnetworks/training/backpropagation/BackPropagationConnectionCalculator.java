@@ -16,9 +16,9 @@ public interface BackPropagationConnectionCalculator extends ConnectionCalculato
     public float getL1weightDecay();
 
     public void setL1weightDecay(float l1weightDecay);
-    
+
     public float getL2weightDecay();
-    
+
     public void setL2weightDecay(float l2weightDecay);
 
     public ValuesProvider getActivations();

@@ -23,50 +23,50 @@ public class BreadthFirstOrderStrategy implements LayerOrderStrategy {
     private Layer startLayer;
 
     public BreadthFirstOrderStrategy(NeuralNetwork neuralNetwork, Layer startLayer) {
-	super();
-	this.neuralNetwork = neuralNetwork;
-	this.startLayer = startLayer;
+        super();
+        this.neuralNetwork = neuralNetwork;
+        this.startLayer = startLayer;
     }
 
     @Override
     public List<ConnectionCandidate> order() {
-	List<ConnectionCandidate> result = new ArrayList<>();
+        List<ConnectionCandidate> result = new ArrayList<>();
 
-	Layer currentLayer = startLayer;
+        Layer currentLayer = startLayer;
 
-	Queue<Layer> layersQueue = new LinkedList<>();
-	layersQueue.add(currentLayer);
-	Set<Connections> visitedConnections = new HashSet<>();
+        Queue<Layer> layersQueue = new LinkedList<>();
+        layersQueue.add(currentLayer);
+        Set<Connections> visitedConnections = new HashSet<>();
 
-	while (layersQueue.size() > 0) {
-	    Layer l = layersQueue.poll();
+        while (layersQueue.size() > 0) {
+            Layer l = layersQueue.poll();
 
-	    for (Connections c : l.getConnections(neuralNetwork)) {
-		Layer opposite = Util.getOppositeLayer(c, l);
-		if (!visitedConnections.contains(c)) {
-		    result.add(new ConnectionCandidate(c, opposite));
-		    layersQueue.add(opposite);
-		    visitedConnections.add(c);
-		}
-	    }
-	}
+            for (Connections c : l.getConnections(neuralNetwork)) {
+                Layer opposite = Util.getOppositeLayer(c, l);
+                if (!visitedConnections.contains(c)) {
+                    result.add(new ConnectionCandidate(c, opposite));
+                    layersQueue.add(opposite);
+                    visitedConnections.add(c);
+                }
+            }
+        }
 
-	return result;
+        return result;
     }
 
     public NeuralNetwork getNeuralNetwork() {
-	return neuralNetwork;
+        return neuralNetwork;
     }
 
     public void setNeuralNetwork(NeuralNetwork neuralNetwork) {
-	this.neuralNetwork = neuralNetwork;
+        this.neuralNetwork = neuralNetwork;
     }
 
     public Layer getStartLayer() {
-	return startLayer;
+        return startLayer;
     }
 
     public void setStartLayer(Layer startLayer) {
-	this.startLayer = startLayer;
+        this.startLayer = startLayer;
     }
 }
