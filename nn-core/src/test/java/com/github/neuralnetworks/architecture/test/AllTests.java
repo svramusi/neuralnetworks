@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ Conv2DConnectionTest.class, LayerTest.class, NeuralNetworkImplTest.class })
+@SuiteClasses({ Conv2DConnectionTest.class, LayerTest.class, NeuralNetworkImplTest.class, MatrixTest.class })
 public class AllTests {
 
 }
