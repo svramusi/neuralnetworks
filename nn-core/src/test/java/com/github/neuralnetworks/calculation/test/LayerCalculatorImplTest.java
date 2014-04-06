@@ -16,6 +16,7 @@ import org.junit.Test;
 import com.github.neuralnetworks.architecture.Connections;
 import com.github.neuralnetworks.architecture.FullyConnected;
 import com.github.neuralnetworks.architecture.Layer;
+import com.github.neuralnetworks.architecture.Matrix;
 import com.github.neuralnetworks.architecture.NeuralNetworkImpl;
 import com.github.neuralnetworks.calculation.LayerCalculatorImpl;
 import com.github.neuralnetworks.calculation.LayerOrderStrategy.ConnectionCandidate;
@@ -65,6 +66,7 @@ public class LayerCalculatorImplTest {
 
         List<ConnectionCandidate> connections = new ArrayList<ConnectionCandidate>();
         connections.add(new ConnectionCandidate(firstConnection, middleLayer));
+        connections.add(new ConnectionCandidate(secondConnection, bottomLayer));
     }
 
     @Test
@@ -158,5 +160,21 @@ public class LayerCalculatorImplTest {
     @Test
     public void calculateDoesntTriggerEventWhenThereIsntAListener() {
         layerCalc.calculate(network, topLayer, calculatedLayers, results);
+    }
+
+    @Test
+    public void calculateWithCalculator() {
+        TestPropagationEventListener listener = new TestPropagationEventListener();
+        layerCalc.addEventListener(listener);
+
+        ConstantConnectionCalculator calc = new ConstantConnectionCalculator();
+        layerCalc.addConnectionCalculator(topLayer, calc);
+
+        Matrix matrix = new Matrix(10, 10);
+        results.addValues(topLayer, matrix);
+
+        layerCalc.calculate(network, topLayer, calculatedLayers, results);
+
+        assertTrue(listener.wasEventHandled());
     }
 }
