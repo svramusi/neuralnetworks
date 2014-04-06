@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ TargetLayerOrderStrategyTest.class, ValuesProviderTest.class })
+@SuiteClasses({ TargetLayerOrderStrategyTest.class, ValuesProviderTest.class, LayerCalculatorImplTest.class })
 public class AllTests {
 
 }
