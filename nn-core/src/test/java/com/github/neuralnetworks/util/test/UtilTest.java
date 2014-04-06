@@ -20,11 +20,6 @@ public class UtilTest {
 
     private final Layer inputLayer = new Layer();
     private final Layer outputLayer = new Layer();
-    private final int inputFeatureMapColumns = 20;
-    private final int inputFeatureMapRows = 10;
-    private final int subsamplingRegionRows = 1;
-    private final int subsamplingRegionCols = 1;
-    private final int filters = 1;
     private final List<Connections> connections = new ArrayList<Connections>();
 
     @Test
@@ -61,6 +56,34 @@ public class UtilTest {
         Util.fillArray(array, 1);
 
         assertEquals(0, array.length);
+    }
+
+    private Conv2DConnection getConv2DConnection() {
+        int inputFeatureMapColumns = 20;
+        int inputFeatureMapRows = 10;
+        int inputFilters = 1;
+        int kernelRows = 1;
+        int kernelColumns = 1;
+        int outputFilters = 2;
+        int stride = 1;
+
+        return new Conv2DConnection(inputLayer, outputLayer, inputFeatureMapColumns, inputFeatureMapRows, inputFilters,
+                kernelRows, kernelColumns, outputFilters, stride);
+    }
+
+    private Subsampling2DConnection getSubsampling2DConnection() {
+        int inputFeatureMapColumns = 20;
+        int inputFeatureMapRows = 10;
+        int subsamplingRegionRows = 1;
+        int subsamplingRegionCols = 1;
+        int filters = 1;
+
+        return new Subsampling2DConnection(inputLayer, outputLayer, inputFeatureMapColumns, inputFeatureMapRows,
+                subsamplingRegionRows, subsamplingRegionCols, filters);
+    }
+
+    private FullyConnected getFullyConnected() {
+        return new FullyConnected(inputLayer, outputLayer, 0, 0);
     }
 
     @Test
@@ -101,7 +124,6 @@ public class UtilTest {
         int outputFilters = 2;
         int stride = 1;
 
-        List<Connections> connections = new ArrayList<Connections>();
         Conv2DConnection connection = new Conv2DConnection(inputLayer, outputLayer, inputFeatureMapColumns,
                 inputFeatureMapRows, inputFilters, kernelRows, kernelColumns, outputFilters, stride);
         connections.add(connection);
@@ -137,8 +159,7 @@ public class UtilTest {
 
     @Test
     public void fullyConnectedGraphWithTooManyColumnsIsntBiasLayer() {
-        Connections connection = new FullyConnected(inputLayer, outputLayer, 2, 0);
-        connections.add(connection);
+        connections.add(getFullyConnected());
         inputLayer.setConnections(connections);
 
         assertFalse(Util.isBias(inputLayer));
@@ -146,8 +167,7 @@ public class UtilTest {
 
     @Test
     public void outputLayerIsntBiasLayer() {
-        Connections connection = new FullyConnected(inputLayer, outputLayer, 2, 0);
-        connections.add(connection);
+        connections.add(getFullyConnected());
         inputLayer.setConnections(connections);
 
         assertFalse(Util.isBias(outputLayer));
@@ -155,9 +175,7 @@ public class UtilTest {
 
     @Test
     public void subsampleConnectionIsntBiasLayer() {
-        Subsampling2DConnection connection = new Subsampling2DConnection(inputLayer, outputLayer,
-                inputFeatureMapColumns, inputFeatureMapRows, subsamplingRegionRows, subsamplingRegionCols, filters);
-        connections.add(connection);
+        connections.add(getSubsampling2DConnection());
         inputLayer.setConnections(connections);
 
         assertFalse(Util.isBias(inputLayer));
@@ -173,9 +191,7 @@ public class UtilTest {
 
     @Test
     public void subsampling2DConnectionIsASubsamplingLayer() {
-        Subsampling2DConnection connection = new Subsampling2DConnection(inputLayer, outputLayer,
-                inputFeatureMapColumns, inputFeatureMapRows, subsamplingRegionRows, subsamplingRegionCols, filters);
-        connections.add(connection);
+        connections.add(getSubsampling2DConnection());
         inputLayer.setConnections(connections);
 
         assertTrue(Util.isSubsampling(outputLayer));
@@ -183,10 +199,7 @@ public class UtilTest {
 
     @Test
     public void subsampling2DConnectionWithConv2DConnectionIsASubsamplingLayer() {
-        Subsampling2DConnection connection = new Subsampling2DConnection(inputLayer, outputLayer,
-                inputFeatureMapColumns, inputFeatureMapRows, subsamplingRegionRows, subsamplingRegionCols, filters);
-        connections.add(connection);
-
+        connections.add(getSubsampling2DConnection());
         inputLayer.setConnections(connections);
 
         assertTrue(Util.isSubsampling(inputLayer));
@@ -194,10 +207,7 @@ public class UtilTest {
 
     @Test
     public void subsampling2DConnectionWithInputLayerIsntASubsamplingLayer() {
-        Subsampling2DConnection connection = new Subsampling2DConnection(inputLayer, outputLayer,
-                inputFeatureMapColumns, inputFeatureMapRows, subsamplingRegionRows, subsamplingRegionCols, filters);
-        connections.add(connection);
-
+        connections.add(getSubsampling2DConnection());
         connections.add(getConv2DConnection());
         inputLayer.setConnections(connections);
 
@@ -206,8 +216,7 @@ public class UtilTest {
 
     @Test
     public void fullyConnectedGraphIsntASubsamplingLayer() {
-        Connections connection = new FullyConnected(inputLayer, outputLayer, 2, 0);
-        connections.add(connection);
+        connections.add(getFullyConnected());
         inputLayer.setConnections(connections);
 
         assertFalse(Util.isSubsampling(inputLayer));
@@ -215,10 +224,7 @@ public class UtilTest {
 
     @Test
     public void subsampleConnectionIsntAConvolutionalLayer() {
-        Subsampling2DConnection connection = new Subsampling2DConnection(inputLayer, outputLayer,
-                inputFeatureMapColumns, inputFeatureMapRows, subsamplingRegionRows, subsamplingRegionCols, filters);
-        connections.add(connection);
-
+        connections.add(getSubsampling2DConnection());
         inputLayer.setConnections(connections);
 
         assertFalse(Util.isConvolutional(inputLayer));
@@ -235,11 +241,7 @@ public class UtilTest {
     @Test
     public void conv2DConnectionWithSubSampleIsAConvolutionalLayer() {
         connections.add(getConv2DConnection());
-
-        Subsampling2DConnection connection2 = new Subsampling2DConnection(inputLayer, outputLayer,
-                inputFeatureMapColumns, inputFeatureMapRows, subsamplingRegionRows, subsamplingRegionCols, filters);
-        connections.add(connection2);
-
+        connections.add(getSubsampling2DConnection());
         inputLayer.setConnections(connections);
 
         assertTrue(Util.isConvolutional(outputLayer));
@@ -249,36 +251,39 @@ public class UtilTest {
     public void conv2DConnectionWithInputLayerIsntAConvolutionalLayer() {
         connections.add(getConv2DConnection());
         connections.add(getSubsampling2DConnection());
-
         inputLayer.setConnections(connections);
 
         assertFalse(Util.isConvolutional(inputLayer));
-    }
-
-    private Conv2DConnection getConv2DConnection() {
-        int inputFeatureMapColumns = 20;
-        int inputFeatureMapRows = 10;
-        int inputFilters = 1;
-        int kernelRows = 1;
-        int kernelColumns = 1;
-        int outputFilters = 2;
-        int stride = 1;
-
-        return new Conv2DConnection(inputLayer, outputLayer, inputFeatureMapColumns, inputFeatureMapRows, inputFilters,
-                kernelRows, kernelColumns, outputFilters, stride);
-    }
-
-    private Subsampling2DConnection getSubsampling2DConnection() {
-        return new Subsampling2DConnection(inputLayer, outputLayer, inputFeatureMapColumns, inputFeatureMapRows,
-                subsamplingRegionRows, subsamplingRegionCols, filters);
     }
 
     @Test
     public void fullyConnectedGraphIsntAConvolutionalLayer() {
+        connections.add(getFullyConnected());
+        inputLayer.setConnections(connections);
+
+        assertFalse(Util.isConvolutional(inputLayer));
+    }
+
+    @Test
+    public void emptyConnectionsDoesntHaveBias() {
+        assertFalse(Util.hasBias(connections));
+    }
+
+    @Test
+    public void aConnectionHasBias() {
+        Connections connection = new FullyConnected(inputLayer, outputLayer, 1, 0);
+        connections.add(connection);
+        inputLayer.setConnections(connections);
+
+        assertTrue(Util.hasBias(connections));
+    }
+
+    @Test
+    public void aConnectionDoesntHaveBias() {
         Connections connection = new FullyConnected(inputLayer, outputLayer, 2, 0);
         connections.add(connection);
         inputLayer.setConnections(connections);
 
-        assertFalse(Util.isConvolutional(inputLayer));
+        assertFalse(Util.hasBias(connections));
     }
 }
